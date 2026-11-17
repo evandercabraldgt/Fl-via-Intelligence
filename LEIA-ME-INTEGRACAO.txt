@@ -1,0 +1,37 @@
+FLÁVIA BEZERRA STUDIO + FLÁVIA INTELLIGENCE
+PACOTE PREPARADO PARA NETLIFY COM FUNCTIONS
+
+ESTRUTURA
+- public/index.html: interface do Studio
+- netlify/functions/flavia-intelligence.js: conexão segura com a API Gemini
+- netlify.toml: informa ao Netlify onde estão o site e a função
+- FLAVIA_INTELLIGENCE_INSTRUCTIONS.md: instruções de comportamento da assistente
+
+IMPORTANTE: NÃO publique este pacote pelo upload manual comum em Deploys.
+O deploy manual/arrastar e soltar publica arquivos estáticos, mas não executa o processo de build necessário para preparar as Functions. Para a FLÁVIA INTELLIGENCE funcionar, publique este projeto por integração com Git (recomendado) ou Netlify CLI.
+
+CAMINHO RECOMENDADO PELO GITHUB
+1. Baixe e extraia este ZIP.
+2. Crie um repositório no GitHub. Pode ser privado.
+3. Envie para a raiz do repositório o CONTEÚDO desta pasta extraída: as pastas public e netlify, e os arquivos netlify.toml, LEIA-ME.txt e FLAVIA_INTELLIGENCE_INSTRUCTIONS.md.
+   Atenção: netlify.toml deve ficar na raiz do repositório, não dentro de outra pasta.
+4. No Netlify, abra o site que já existe.
+5. Vá em Project configuration / Build & deploy / Continuous deployment e conecte o repositório do GitHub. Se aparecer a opção de escolher um repositório existente, selecione o que acabou de criar.
+6. Confirme que a configuração usa a raiz do repositório. O netlify.toml já define publish = "public" e functions = "netlify/functions".
+7. Em variáveis de ambiente, mantenha GEMINI_API_KEY como Secret e disponível para Functions. Não cole a chave no código, no GitHub ou em mensagens.
+8. Inicie um deploy. Aguarde o build terminar.
+9. Na área Functions do site, confirme que aparece flavia-intelligence.
+10. Só então teste a aba FLÁVIA INTELLIGENCE.
+
+SE A CHAVE JÁ ESTÁ CADASTRADA
+Não crie outra. Confirme apenas que GEMINI_API_KEY está disponível para Functions. Se o Netlify solicitar novo deploy após alteração da variável, faça o deploy.
+
+O QUE FOI CONFERIDO
+- ZIP original abriu sem erro.
+- O pacote de origem da integração continha a função JavaScript e a configuração Netlify.
+- Esta versão reorganiza os arquivos para separar o site público (public) da função privada (netlify/functions).
+- A sintaxe JavaScript foi verificada quando Node.js está disponível no ambiente de preparação.
+- A conexão real com Gemini ainda depende do deploy e da variável secreta no Netlify; não foi possível testá-la sem publicar no seu site.
+
+MODELO
+A função está configurada para Gemini 3.8 Flash pela Interactions API, conforme a documentação oficial disponível em 17/11/2026.
