@@ -13,126 +13,129 @@ Para carrosséis, respeite exatamente a quantidade solicitada. Se a usuária ped
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
-    return { statusCode: 204, headers: corsHeaders(), body: '' };
+    return {
+      statusCode: 204,
+      headers: corsHeaders(),
+      body: ''
+    };
   }
 
   if (event.httpMethod !== 'POST') {
-    return jsonResponse(405, { error: 'Método não permitido. Envie a mensagem pelo botão do Studio.' });
+    return jsonResponse(405, {
+      error: 'Método não permitido. Envie a mensagem pelo botão do Studio.'
+    });
   }
 
   try {
-    const apiKey = process.env.GEMINI_API_KEY;
+    const apiKey = process.env.GROQ_API_KEY;
+
     if (!apiKey) {
-      return jsonResponse(500, { error: 'A chave GEMINI_API_KEY não foi encontrada nas variáveis de ambiente do Netlify.' });
+      return jsonResponse(500, {
+        error: 'A chave GROQ_API_KEY não foi encontrada nas variáveis de ambiente do Netlify.'
+      });
     }
 
     const rawBody = event.isBase64Encoded
       ? Buffer.from(event.body || '', 'base64').toString('utf8')
       : (event.body || '{}');
+
     const body = JSON.parse(rawBody);
     const message = String(body.message || '').trim();
 
     if (!message) {
-      return jsonResponse(400, { error: 'Escreva uma mensagem antes de enviar.' });
-    }
-
-    const history = Array.isArray(body.history) ? body.history.slice(-10) : [];
-    const contents = history
-      .filter(item => item && ['user', 'assistant'].includes(item.role) && item.content)
-      .map(item => ({
-        role: item.role === 'assistant' ? 'model' : 'user',
-        parts: [{ text: String(item.content).slice(0, 5000) }]
-      }));
-
-    contents.push({ role: 'user', parts: [{ text: message.slice(0, 8000) }] });
-
-    const requestBody = {
-      systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
-      contents,
-      generationConfig: {
-        temperature: 0.7,
-        maxOutputTokens: 4096
-      }
-    };
-
-    const endpoint = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent';
-    let lastError = 'O Gemini não conseguiu concluir a resposta.';
-
-    for (let attempt = 1; attempt <= 3; attempt++) {
-      let response;
-      let rawResponse = '';
-
-      try {
-        response = await fetch(endpoint, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-goog-api-key': apiKey
-          },
-          body: JSON.stringify(requestBody),
-          signal: AbortSignal.timeout(8000)
-        });
-        rawResponse = await response.text();
-        console.error('RESPOSTA DO GEMINI:', response.status, rawResponse.slice(0, 1500));
-      } catch (error) {
-        lastError = error.name === 'TimeoutError'
-          ? 'O Gemini demorou mais que o limite de espera. Tente novamente.'
-          : `Não foi possível conectar ao Gemini: ${error.message}`;
-
-        if (attempt < 3) {
-          await new Promise(resolve => setTimeout(resolve, attempt * 700));
-          continue;
-        }
-        return jsonResponse(504, { error: lastError });
-      }
-
-      let data;
-      try {
-        data = JSON.parse(rawResponse);
-      } catch {
-        lastError = `O Gemini devolveu uma resposta inesperada (HTTP ${response.status}).`;
-        if (attempt < 3 && response.status >= 500) {
-          await new Promise(resolve => setTimeout(resolve, attempt * 700));
-          continue;
-        }
-        return jsonResponse(502, { error: lastError, detail: rawResponse.slice(0, 300) });
-      }
-
-      if (!response.ok) {
-        lastError = data.error?.message || `Erro HTTP ${response.status} ao consultar o Gemini.`;
-        if (attempt < 3 && [429, 500, 502, 503, 504].includes(response.status)) {
-          await new Promise(resolve => setTimeout(resolve, attempt * 700));
-          continue;
-        }
-        return jsonResponse(response.status === 429 ? 429 : 502, {
-          error: `O Gemini retornou erro ${response.status}.`,
-          detail: lastError
-        });
-      }
-
-      const parts = data.candidates?.[0]?.content?.parts || [];
-      const reply = parts
-        .filter(part => typeof part.text === 'string')
-        .map(part => part.text.trim())
-        .filter(Boolean)
-        .join('\n')
-        .trim();
-
-      if (reply) {
-        return jsonResponse(200, { reply });
-      }
-
-      const finishReason = data.candidates?.[0]?.finishReason || 'não informado';
-      const blockReason = data.promptFeedback?.blockReason;
-      return jsonResponse(502, {
-        error: 'O Gemini recebeu a mensagem, mas não entregou texto.',
-        detail: blockReason
-          ? `A solicitação foi bloqueada pelo filtro de segurança: ${blockReason}.`
-          : `Motivo informado pelo Gemini: ${finishReason}.`
+      return jsonResponse(400, {
+        error: 'Escreva uma mensagem antes de enviar.'
       });
     }
 
-    return jsonResponse(502, { error: 'Não foi possível obter resposta do Gemini.', detail: lastError });
+    const history = Array.isArray(body.history)
+      ? body.history.slice(-10)
+      : [];
+
+    const messages = [
+      {
+        role: 'system',
+        content: SYSTEM_PROMPT
+      },
+      ...history
+        .filter(item =>
+          item &&
+          ['user', 'assistant'].includes(item.role) &&
+          item.content
+        )
+        .map(item => ({
+          role: item.role,
+          content: String(item.content).slice(0, 5000)
+        })),
+      {
+        role: 'user',
+        content: message.slice(0, 8000)
+      }
+    ];
+
+    let response;
+
+    try {
+      response = await fetch(
+        'https://api.groq.com/openai/v1/chat/completions',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`
+          },
+          body: JSON.stringify({
+            model: 'llama-3.3-70b-versatile',
+            messages,
+            temperature: 0.7,
+            max_completion_tokens: 4096
+          }),
+          signal: AbortSignal.timeout(25000)
+        }
+      );
+    } catch (error) {
+      return jsonResponse(504, {
+        error: 'Não foi possível conectar à Groq. Tente novamente.',
+        detail: error.name === 'TimeoutError'
+          ? 'A resposta demorou mais que o limite de espera.'
+          : error.message
+      });
+    }
+
+    const rawResponse = await response.text();
+
+    let data;
+
+    try {
+      data = JSON.parse(rawResponse);
+    } catch {
+      return jsonResponse(502, {
+        error: 'A Groq devolveu uma resposta inesperada.',
+        detail: rawResponse.slice(0, 300)
+      });
+    }
+
+    if (!response.ok) {
+      const detail =
+        data.error?.message ||
+        `Erro HTTP ${response.status} ao consultar a Groq.`;
+
+      return jsonResponse(response.status, {
+        error: `A Groq retornou erro ${response.status}.`,
+        detail
+      });
+    }
+
+    const reply = data.choices?.[0]?.message?.content?.trim();
+
+    if (!reply) {
+      return jsonResponse(502, {
+        error: 'A Groq recebeu a mensagem, mas não entregou uma resposta em texto.'
+      });
+    }
+
+    return jsonResponse(200, { reply });
+
   } catch (error) {
     return jsonResponse(500, {
       error: 'A função FLÁVIA INTELLIGENCE encontrou um erro interno.',
