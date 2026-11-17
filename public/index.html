@@ -85,7 +85,7 @@ footer{text-align:center;color:var(--muted);padding:22px;font-size:12px}
 <div class="card"><h3>Vinho</h3><p>#672638</p><div style="height:30px;background:#672638;border-radius:7px;margin-top:8px"></div></div>
 <div class="card"><h3>Bege</h3><p>#F4E6D1</p><div style="height:30px;background:#F4E6D1;border:1px solid #ddd;border-radius:7px;margin-top:8px"></div></div>
 </div><p><b>Marca:</b> A Taróloga Fora da Caixa</p><p><b>Território:</b> Prosperidade Emocional e reconstrução da identidade.</p><p><b>Tom:</b> humano, direto, provocador, profundo e autoral.</p><p><b>Assinatura:</b> Nem todo mistério pede uma previsão. Alguns pedem coragem para olhar.</p></section>
-<section id="assistente" class="page panel hidden"><h2>Cérebro do assistente</h2><p class="sub">Esta é a configuração-base para usar em um assistente de IA. O painel local não chama um modelo de IA nem publica conteúdo automaticamente.</p><div class="output" id="promptBase"># FLÁVIA INTELLIGENCE — cérebro oficial do Flávia Bezerra Studio
+<section id="assistente" class="page panel hidden"><h2>Cérebro do assistente</h2><p class="sub">Esta é a configuração-base da inteligência central que atende às ferramentas do Studio. As criações são geradas por IA e precisam ser revisadas antes de publicar.</p><div class="output" id="promptBase"># FLÁVIA INTELLIGENCE — cérebro oficial do Flávia Bezerra Studio
 
 Você é FLÁVIA INTELLIGENCE, estrategista de conteúdo, roteirista, copywriter, diretora criativa e parceira de planejamento de Flávia Bezerra, da marca **A Taróloga Fora da Caixa**. Trabalhe em português brasileiro natural. Use o contexto abaixo sem pedir que a criadora repita informações já fornecidas.
 
@@ -178,7 +178,7 @@ O Studio não é uma máquina de posts genéricos. É um sistema de inteligênci
 <label for="fiMessage">O que vamos criar ou resolver?</label>
 <textarea id="fiMessage" placeholder="Ex.: Crie um carrossel de 8 telas sobre prosperidade emocional, com tom direto e provocador."></textarea>
 <div class="actions"><button class="btn" type="button" id="fiSend">Enviar para FLÁVIA INTELLIGENCE</button><button class="btn secondary" type="button" id="fiClear">Limpar conversa</button></div>
-<p class="small" id="fiStatus">A conversa será enviada com segurança ao Gemini.</p>
+<p class="small" id="fiStatus">As ferramentas do Studio usam a mesma inteligência central da Groq.</p>
 </div>
 <div class="output" id="fiReply" aria-live="polite">Sua resposta aparecerá aqui.</div>
 </section>
@@ -187,63 +187,61 @@ O Studio não é uma máquina de posts genéricos. É um sistema de inteligênci
 const pages=[...document.querySelectorAll('.page')];
 document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');pages.forEach(p=>p.classList.toggle('hidden',p.id!==b.dataset.page));if(b.dataset.page==='projetos')listar()}));
 function valor(id){return document.getElementById(id).value.trim()}
-function gerarConteudo(){
-let f=valor('formato'),o=valor('objetivo'),t=valor('tema')||'um tema a definir',of=valor('oferta'),tom=valor('tom'),n=Number(valor('qtdTelas')||10),x='';
-const toneGuide={ 'Desbocado, direto e objetivo':'Use linguagem franca, popular e sem rodeios. Vá ao ponto, sem agressividade gratuita.', 'Completo e aprofundado':'Desenvolva o raciocínio com contexto, nuances e conclusão consistente, sem enrolação.', 'Filosófico e reflexivo':'Traga reflexão, profundidade e perguntas que ampliem a percepção, sem ficar abstrato.', 'Suave e acolhedor':'Use delicadeza, empatia e firmeza, sem infantilizar nem suavizar demais a mensagem.', 'Poético e sensível':'Use imagens e ritmo poético com clareza e sentido, sem excesso de metáforas.', 'Prático e aplicável':'Priorize exemplos concretos, passos e orientações que possam ser colocados em prática.', 'Necessário e assertivo':'Diga o que precisa ser dito com maturidade, precisão e firmeza.', 'Tapa na cara, provocador':'Use uma verdade desconfortável e um contraste forte, sem humilhar ou culpar.', 'Debochado e afrontoso':'Use ironia inteligente e deboche na medida, sem atacar a audiência.', 'Profundo e acolhedor':'Una profundidade emocional e acolhimento sem vitimização.', 'Didático e autoral':'Explique com clareza e personalidade, sem tom de palestra.', 'Direto e provocador':'Questione crenças e vá direto ao ponto com respeito.'};
-const hookBank=[
-`O detalhe sobre ${t} que quase ninguém está disposto a encarar`,
-`Talvez o problema em ${t} não seja aquilo que você aprendeu a enxergar`,
-`O que parece ${t} pode estar escondendo uma questão bem diferente`,
-`Antes de insistir em ${t}, observe esta contradição`,
-`A pergunta que muda a forma de olhar para ${t}`,
-`Nem toda resposta sobre ${t} está na superfície`,
-`Você pode estar interpretando ${t} pela metade`,
-`O lado de ${t} que costuma ficar fora da conversa`,
-`E se ${t} não for o verdadeiro centro da questão?`,
-`Uma verdade desconfortável sobre ${t}`,
-`O padrão que se disfarça de escolha quando o assunto é ${t}`,
-`O que o Tarot pode revelar quando a pergunta é ${t}`
-];
-const hookSection=`GANCHOS E TÍTULOS MAGNÉTICOS\n${hookBank.map((h,i)=>`${i+1}. ${h}`).join('\n')}\n\nLÓGICA DE ATRAÇÃO E COMPORTAMENTO\nUse curiosidade, especificidade, contraste, identificação, quebra de expectativa, lacuna de informação e relevância pessoal. Escolha o gatilho pela intenção do conteúdo, sem manipular medo, inventar urgência ou prometer resultados. Neuromarketing e neurociência orientam hipóteses de comunicação, não garantem viralização nem autorizam afirmações científicas sem fonte.\n\n`;
-if(f==='Carrossel'){
-const roles=[
-['GANCHO MAGNÉTICO',`Talvez você esteja olhando para ${t} pelo lado mais óbvio.`],
-['IDENTIFICAÇÃO CONCRETA',`Isso aparece em pequenas situações do cotidiano: você tenta resolver, repensa, busca sinais e continua sentindo que falta uma peça.`],
-['CONTRADIÇÃO',`O que parece uma decisão isolada pode estar ligado a uma crença, expectativa ou padrão que se repete sem ser percebido.`],
-['APROFUNDAMENTO',`A questão não é se culpar pelo que viveu. É reconhecer o que essa experiência ensinou você a aceitar, temer ou desejar.`],
-['VIRADA DE PERSPECTIVA',`Talvez a pergunta mais útil não seja apenas o que vai acontecer, mas o que ainda não foi considerado.`],
-['TAROT COMO INVESTIGAÇÃO',`O Tarot pode colocar símbolos e possibilidades na mesa, ampliar a leitura da situação e ajudar a formular perguntas mais honestas.`],
-['APLICAÇÃO NA VIDA',`Observe uma situação concreta: o que se repete, qual é sua resposta automática e que outra escolha está ao seu alcance?`],
-['NOVA CAMADA',`Quando você muda o ponto de observação, não apaga a história. Você ganha mais elementos para decidir como continuar.`],
-['SÍNTESE MEMORÁVEL',`Nem tudo que parece destino precisa ser vivido no piloto automático. Consciência também muda caminhos.`],
-['FECHAMENTO + CTA',`Nem todo mistério pede uma previsão. Alguns pedem coragem para olhar. Salve para reler com calma.`]
-];
-const extras=[
-['DESDOBRAMENTO',`Existe uma diferença entre desejar uma mudança e reconhecer o que precisa ser revisto para sustentá-la.`],
-['PERGUNTA INCÔMODA',`O que você continua chamando de normal apenas porque se acostumou a conviver com isso?`],
-['CONEXÃO COM A HISTÓRIA',`Experiências pessoais e familiares podem influenciar escolhas, mas não definem sozinhas o seu futuro.`],
-['POSSIBILIDADE',`Uma nova perspectiva não resolve tudo de uma vez, mas pode mostrar por onde começar a investigar.`],
-['CONVITE À REFLEXÃO',`Que informação, conversa ou decisão ajudaria você a enxergar essa situação com mais clareza?`],
-['SÍNTESE',`Olhar de frente não é ter todas as respostas. É parar de fugir das perguntas importantes.`],
-['MOVIMENTO',`Escolha um passo possível, concreto e coerente com o que você já percebeu.`],
-['ENCERRAMENTO',`A sua história merece mais do que respostas prontas. Merece uma leitura inteira.`],
-['CTA DE COMPARTILHAMENTO',`Envie para alguém que gostaria de olhar para esse assunto por outro ângulo.`],
-['CTA DE SALVAMENTO',`Salve este conteúdo para voltar a ele quando precisar reorganizar suas ideias.`]
-];
-let slides=[];for(let i=0;i<n;i++){let item=i<roles.length?roles[i]:extras[(i-roles.length)%extras.length];slides.push(`TELA ${i+1} — ${item[0]}\n${item[1]}`)}
-x=`ESTRATÉGIA DO CONTEÚDO\nObjetivo: ${o}\nPilar editorial: O Tarô que revela / Os véus da própria história / As quatro prosperidades\nDor, desejo ou necessidade: ${t}\nDescoberta central: olhar para o tema por um ângulo menos óbvio, com identificação e uma nova perspectiva.\n\n${hookSection}TÍTULO PRINCIPAL\n${hookBank[0]}\n\nDUAS ALTERNATIVAS DE TÍTULO\n${hookBank[1]}\n${hookBank[2]}\n\nCARROSSEL COMPLETO — ${n} TELAS\n\n${slides.join('\n\n')}\n\nLEGENDA COMPLEMENTAR\nNem sempre a primeira interpretação conta a história inteira. Vale observar as crenças, expectativas e experiências que influenciam a maneira como você lê o que está vivendo. O Tarot pode oferecer uma linguagem simbólica para ampliar perguntas e perspectivas, sem retirar de você a responsabilidade pelas próprias escolhas.\n\n${of?'Se quiser conhecer '+of+', procure as informações no meu perfil.':'Que outra perspectiva esse tema despertou em você?'}\n\nDIREÇÃO VISUAL\n1. Fundo vinho #672638, gancho em bege #F4E6D1 e detalhe de carta parcialmente revelada.\n2. Fotografia editorial com situação cotidiana reconhecível.\n3. Textura de papel, contraste e pouco texto decorativo.\n4. Símbolo visual que represente a contradição do tema.\n5. Luz e sombra para marcar a virada.\n6. Carta de Tarot em destaque, estética vintage sofisticada.\n7 a ${n-1}. Alternar detalhes de cartas, símbolos, fotografia editorial e fundos limpos, preservando contraste e unidade visual.\n${n}. Encerramento com assinatura A TARÓLOGA FORA DA CAIXA e CTA legível.\n\nTom selecionado: ${tom}. Revise a especificidade do texto antes de publicar; este gerador local oferece uma estrutura-base.`;
-}else if(f==='Ganchos e títulos magnéticos'){
-x=`ESTRATÉGIA\nObjetivo: ${o}\nTema: ${t}\nPúblico: mulheres adultas interessadas em relações, escolhas, Tarot, identidade e prosperidade, tanto em momentos de reconstrução quanto de expansão.\n\n${hookSection}TÍTULOS PARA REELS, TIKTOK E SHORTS\n${hookBank.slice(0,8).map((h,i)=>`${i+1}. ${h}`).join('\n')}\n\nTÍTULOS PARA CARROSSEL\n${hookBank.slice(4,10).map((h,i)=>`${i+1}. ${h}`).join('\n')}\n\nGANCHOS DE IDENTIFICAÇÃO\n1. Tem uma parte dessa situação que você talvez esteja ignorando.\n2. Convenhamos: isso parece uma coisa, mas pode ser outra.\n3. Olha a contradição que aparece quando o assunto é ${t}.\n\nGANCHOS DE AUTORIDADE\n1. Uma leitura mais cuidadosa de ${t} começa por esta pergunta.\n2. O símbolo do Tarot ajuda a investigar uma camada que costuma passar despercebida.\n\nGANCHOS DE CONVERSÃO\n1. Se você quer olhar para ${t} com mais profundidade, conheça ${of||'minhas consultas de Tarot'}.\n2. Uma consulta pode ajudar a organizar perguntas e possibilidades. Veja os detalhes antes de decidir.\n\nEscolha final: teste diferentes ângulos e acompanhe retenção, salvamentos, compartilhamentos, comentários e cliques. Nenhum gancho garante viralização.`;
-}else if(f==='Legenda estratégica'){x=`LEGENDA | ${o.toUpperCase()}\nTema: ${t}\n\n${hookSection}Nem sempre a primeira interpretação explica tudo. Às vezes, vale observar as crenças, expectativas e histórias que influenciam a maneira como lemos uma situação. O Tarot pode oferecer uma linguagem simbólica para ampliar perguntas e perspectivas, sem retirar de você a responsabilidade pelas próprias escolhas.\n\n${of?'Conheça '+of+'.':'Qual outra perspectiva esse tema desperta em você?'}\n\nTom: ${tom}`;}
-else{x=`${f.toUpperCase()} | ${o.toUpperCase()}\nTema: ${t}\n\n${hookSection}ABORDAGEM\nEncontre um ângulo específico e menos óbvio. Mostre uma situação concreta, desenvolva a contradição e ofereça uma nova perspectiva.\n\nIDENTIDADE\nA Taróloga Fora da Caixa. Tarot protagonista quando a conexão for natural, integrado à abordagem sistêmica, ancestral e terapêutica.\n\nCTA\nEscolha uma ação coerente: comentar, salvar, compartilhar ou conhecer uma oferta.\n${of?'Oferta relacionada: '+of:''}\nTom: ${tom}`;}
-document.getElementById('saida').textContent=`TOM ESCOLHIDO: ${tom}\nDIREÇÃO DE VOZ: ${toneGuide[tom]||'Mantenha a voz autoral da marca.'}\n\n`+x;
+async function consultarFlavia(prompt, outputId){
+ const output=document.getElementById(outputId);
+ output.textContent='A FLÁVIA INTELLIGENCE está criando sua resposta...';
+ try{
+  const res=await fetch('/.netlify/functions/flavia-intelligence',{
+   method:'POST',headers:{'Content-Type':'application/json'},
+   body:JSON.stringify({message:prompt,history:[]})
+  });
+  const raw=await res.text();
+  let data={};
+  try{data=JSON.parse(raw)}catch(_){throw new Error('A função devolveu uma resposta inválida. Confira o deploy do Netlify.')}
+  if(!res.ok)throw new Error((data.error||'Falha ao consultar a inteligência')+(data.detail?' '+data.detail:''));
+  output.textContent=data.reply||'A inteligência não retornou texto.';
+ }catch(error){
+  output.textContent='Não foi possível gerar agora: '+error.message;
+ }
 }
-document.getElementById('formato').addEventListener('change',()=>{document.getElementById('slideControls').style.display=valor('formato')==='Carrossel'?'block':'none'});
 
-function gerarRoteiro(){let p=valor('plataforma'),a=valor('assuntoVideo')||'reconstrução emocional',d=valor('duracao');document.getElementById('saidaRoteiro').textContent=`ROTEIRO PARA ${p.toUpperCase()} | ${d}\\nTEMA: ${a}\\n\\nABERTURA (0–3s)\\nEu demorei para perceber que repetir um padrão também é uma escolha que posso começar a questionar.\\n\\nCONTEXTO\\nApresente uma situação cotidiana ligada a ${a}.\\n\\nTENSÃO\\nMostre o custo de continuar agindo no automático.\\n\\nVIRADA\\nExplique o mecanismo emocional sem culpabilizar a pessoa.\\n\\nDIREÇÃO\\nOfereça uma pergunta prática: o que estou aceitando, evitando ou repetindo?\\n\\nFECHAMENTO\\nNinguém vai fazer esse movimento por mim. Mas eu posso começar.\\n\\nCTA\\nConvide a comentar, salvar ou compartilhar.`}
-function gerarPagina(){let p=valor('produto')||'[Nome da oferta]',tr=valor('transformacao')||'[Descreva a transformação e a entrega]',pr=valor('preco');document.getElementById('saidaPagina').textContent=`PÁGINA DE APRESENTAÇÃO | ${p}\\n\\nHEADLINE\\nUm caminho para olhar de frente para ${p}.\\n\\nIDENTIFICAÇÃO\\nSe você está vivendo [situação real do público], esta proposta pode ajudar a organizar um próximo passo.\\n\\nA PROPOSTA\\n${tr}\\n\\nO QUE ESTÁ INCLUÍDO\\n[Inserir entregáveis confirmados]\\n\\nPARA QUEM É\\n[Descrever público e critérios]\\n\\nINVESTIMENTO\\n${pr||'[Informar preço confirmado]'}\\n\\nDÚVIDAS FREQUENTES\\n[Inserir respostas verificadas]\\n\\nCTA\\n[Inserir link ou instrução de contato]`}
-function gerarCampanha(){let o=valor('campOferta')||'[Oferta]',per=valor('periodo')||'[Período a definir]';document.getElementById('saidaCampanha').textContent=`CAMPANHA: ${o}\\nPERÍODO: ${per}\\n\\nFASE 1 — ATRAÇÃO\\nConteúdos que nomeiam o problema e geram identificação.\\n\\nFASE 2 — CONEXÃO\\nHistórias, bastidores, perguntas e reflexões.\\n\\nFASE 3 — AUTORIDADE\\nExplique o método, a proposta, os limites e para quem serve.\\n\\nFASE 4 — CONVERSÃO\\nApresente oferta, entregáveis, condições confirmadas e CTA.\\n\\nPÓS-CAMPANHA\\nAvalie alcance, retenção, respostas, cliques e vendas. Não invente escassez ou depoimentos.`}
-function gerarTarot(){let c=valor('carta')||'A carta escolhida',t=valor('temaTarot')||'autonomia';document.getElementById('saidaTarot').textContent=`REFLEXÃO SIMBÓLICA | ${c}\\nTema: ${t}\\n\\nPergunta central: onde preciso agir com mais consciência e firmeza?\\n\\nLeitura narrativa: use a imagem e os símbolos da carta como convite para observar atitudes, limites e escolhas relacionados a ${t}.\\n\\nAplicação prática: identifique uma situação concreta, uma resposta automática e uma atitude diferente que esteja ao seu alcance.\\n\\nCTA: o que essa imagem desperta em você?\\n\\nObservação: interpretação simbólica para reflexão, não previsão garantida.`}
+async function gerarConteudo(){
+ const f=valor('formato'),o=valor('objetivo'),t=valor('tema'),of=valor('oferta'),tom=valor('tom'),n=Number(valor('qtdTelas')||10);
+ const prompt=`Crie uma peça completa para a marca A Taróloga Fora da Caixa.
+FORMATO: ${f}
+OBJETIVO: ${o}
+TEMA: ${t||'Escolha um tema estratégico coerente com a marca e explique a escolha.'}
+OFERTA/DESTINO: ${of||'Não há oferta informada; não invente uma.'}
+TOM: ${tom}
+${f==='Carrossel'?`QUANTIDADE EXATA: ${n} telas. Entregue estratégia, título principal, duas alternativas de gancho, todas as telas numeradas de 1 a ${n}, legenda complementar e direção visual individual para cada tela.`:''}
+Crie conteúdo original, específico, com narrativa progressiva, identificação, descoberta e CTA coerente. Não use textos genéricos nem invente informações comerciais.`;
+ await consultarFlavia(prompt,'saida');
+}
+async function gerarRoteiro(){
+ const p=valor('plataforma'),a=valor('assuntoVideo'),d=valor('duracao');
+ await consultarFlavia(`Crie um roteiro completo para ${p}, com duração aproximada de ${d}. Tema: ${a||'Escolha um tema coerente com o posicionamento da marca.'}. Comece pela tensão, sem apresentação. Entregue gancho, texto falado, cenas ou indicações visuais quando úteis, virada, fechamento, CTA, título e descrição quando fizer sentido. Adapte ritmo e profundidade à plataforma e duração.`, 'saidaRoteiro');
+}
+async function gerarPagina(){
+ const p=valor('produto'),tr=valor('transformacao'),pr=valor('preco');
+ await consultarFlavia(`Crie uma página de vendas/apresentação completa e persuasiva para a marca A Taróloga Fora da Caixa.
+Produto/serviço: ${p||'[NOME DA OFERTA A DEFINIR]'}
+Transformação e entrega informadas: ${tr||'[INFORMAÇÕES DA ENTREGA A COMPLETAR]'}
+Preço informado: ${pr||'Não informado. Não invente.'}
+Entregue headline, identificação, problema, proposta, método, entregáveis, benefícios, para quem é e para quem não é, objeções, perguntas frequentes, investimento e CTA. Onde faltarem dados, use campos [A PREENCHER], sem inventar preço, resultado, depoimento, garantia ou condição.`, 'saidaPagina');
+}
+async function gerarCampanha(){
+ const o=valor('campOferta'),per=valor('periodo');
+ await consultarFlavia(`Planeje uma campanha completa para a marca A Taróloga Fora da Caixa.
+Oferta: ${o||'[OFERTA A DEFINIR]'}
+Período: ${per||'Não informado; proponha uma sequência sem inventar datas.'}
+Organize atração, conexão, autoridade e conversão. Inclua objetivo, mensagem central, público, calendário sugerido, conteúdos por etapa, ganchos, stories, chamadas para ação, peças de venda e indicadores para acompanhar. Não invente preço, bônus, depoimentos, escassez, prazo ou condições comerciais.`, 'saidaCampanha');
+}
+async function gerarTarot(){
+ const c=valor('carta'),t=valor('temaTarot');
+ await consultarFlavia(`Crie uma leitura/reflexão aprofundada usando a carta ou arquétipo: ${c||'Peça a carta antes de interpretar, se for indispensável.'}.
+Tema/pergunta: ${t||'Apresente possibilidades de investigação sem presumir uma pergunta.'}
+Considere simbolismo tradicional, contexto da pergunta e abordagem sistêmica quando pertinente. Diferencie significado tradicional, leitura simbólica/reflexiva e possibilidades preditivas apenas se a pergunta solicitar. Não afirme certezas nem invente cartas que não foram informadas. Termine com síntese e perguntas práticas.`, 'saidaTarot');
+}
 function projetos(){return JSON.parse(localStorage.getItem('flaviaProjetos')||'[]')}
 function salvarSaida(){let s=valor('tema')||'Conteúdo sem título',txt=document.getElementById('saida').textContent;let a=projetos();a.unshift({titulo:s,conteudo:txt,data:new Date().toLocaleString('pt-BR')});localStorage.setItem('flaviaProjetos',JSON.stringify(a));alert('Rascunho salvo na biblioteca deste navegador.')}
 function listar(){let a=projetos(),el=document.getElementById('listaProjetos');el.innerHTML=a.length?'':'<p class="small">Ainda não há projetos salvos.</p>';a.forEach((p,i)=>{let d=document.createElement('div');d.className='item';let span=document.createElement('div');span.innerHTML='<b></b><div class="small"></div>';span.querySelector('b').textContent=p.titulo;span.querySelector('.small').textContent=p.data;let b=document.createElement('button');b.className='btn secondary';b.textContent='Abrir';b.onclick=()=>{document.getElementById('saida').textContent=p.conteudo;document.querySelector('[data-page="criar"]').click()};d.append(span,b);el.append(d)})}
@@ -284,7 +282,7 @@ if(statusBox){statusBox.textContent='Studio carregado. Os comandos JavaScript es
      if(!res.ok) throw new Error(data.error||'Não foi possível concluir a solicitação.');
      history.push({role:'user',content:text},{role:'assistant',content:data.reply});
      reply.textContent=data.reply; msg.value=''; status.textContent='Resposta recebida.';
-   }catch(e){status.textContent=e.message+' Confira se a função foi publicada e se GEMINI_API_KEY está disponível para Functions.';}
+   }catch(e){status.textContent=e.message+' Confira se a função foi publicada e se GROQ_API_KEY está configurada nas variáveis de ambiente do Netlify.';}
    finally{send.disabled=false;}
  });
  document.getElementById('fiClear').addEventListener('click',()=>{history.length=0;reply.textContent='Conversa limpa. Como posso ajudar?';status.textContent='Histórico desta sessão apagado.';});
