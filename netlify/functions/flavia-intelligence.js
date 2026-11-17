@@ -28,7 +28,7 @@ exports.handler = async (event) => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
       body: JSON.stringify({
-        model: 'gemini-3.8-flash',
+        model: 'gemini-3.8-flash-lite',
         input,
         system_instruction: SYSTEM_PROMPT,
         store: false
