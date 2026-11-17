@@ -4,82 +4,46 @@ exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers: cors(), body: '' };
   if (event.httpMethod !== 'POST') return json(405, { error: 'Método não permitido.' });
 
+  const key = process.env.GEMINI_API_KEY;
+  if (!key) return json(500, { error: 'A variável GEMINI_API_KEY não está disponível para esta função. Confira as variáveis de ambiente do Netlify e publique novamente.' });
+
+  let body;
+  try { body = JSON.parse(event.body || '{}'); }
+  catch { return json(400, { error: 'A mensagem recebida não está em formato válido.' }); }
+
+  const message = String(body.message || '').trim();
+  if (!message) return json(400, { error: 'Escreva uma mensagem.' });
+
+  const history = Array.isArray(body.history) ? body.history.slice(-8) : [];
+  const transcript = history
+    .filter(item => item && ['user', 'assistant'].includes(item.role) && item.content)
+    .map(item => `${item.role === 'assistant' ? 'FLÁVIA INTELLIGENCE' : 'USUÁRIA'}: ${String(item.content).slice(0, 5000)}`)
+    .join('\n\n');
+  const input = `${transcript ? `CONTEXTO DA CONVERSA:\n${transcript}\n\n` : ''}NOVA MENSAGEM DA USUÁRIA:\n${message.slice(0, 8000)}`;
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 24000);
   try {
-    const key = process.env.GEMINI_API_KEY;
-    if (!key) return json(500, { error: 'A variável GEMINI_API_KEY não está disponível para esta função. Confira se ela está no escopo Functions e faça um novo deploy.' });
-
-    const body = JSON.parse(event.body || '{}');
-    const message = String(body.message || '').trim();
-    if (!message) return json(400, { error: 'Escreva uma mensagem.' });
-
-    // A Interactions API recebe o histórico como texto quando não usamos previous_interaction_id.
-    const history = Array.isArray(body.history) ? body.history.slice(-12) : [];
-    const transcript = history
-      .filter(item => item && ['user', 'assistant'].includes(item.role) && item.content)
-      .map(item => `${item.role === 'assistant' ? 'FLÁVIA INTELLIGENCE' : 'USUÁRIA'}: ${String(item.content).slice(0, 10000)}`)
-      .join('\n\n');
-    const input = `${transcript ? `CONTEXTO DA CONVERSA:\n${transcript}\n\n` : ''}NOVA MENSAGEM DA USUÁRIA:\n${message.slice(0, 12000)}`;
-
-    const requestBody = JSON.stringify({
-      model: 'gemini-3.8-flash',
-      input,
-      system_instruction: SYSTEM_PROMPT,
-      store: false
+    const response = await fetch('https://generativelanguage.googleapis.com/v1beta/interactions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
+      body: JSON.stringify({
+        model: 'gemini-3.8-flash',
+        input,
+        system_instruction: SYSTEM_PROMPT,
+        store: false
+      }),
+      signal: controller.signal
     });
 
-    // Repete automaticamente apenas falhas transitórias de limite/sobrecarga/servidor.
-    // São 4 tentativas no total, com espera progressiva e respeito a Retry-After.
-    let response;
-    let data = {};
-    let lastError = null;
-    const maxAttempts = 4;
+    const raw = await response.text();
+    let data;
+    try { data = JSON.parse(raw); }
+    catch { return json(502, { error: `O Gemini devolveu uma resposta que não veio em JSON (HTTP ${response.status}).` }); }
 
-    for (let attempt = 0; attempt < maxAttempts; attempt++) {
-      try {
-        response = await fetch('https://generativelanguage.googleapis.com/v1beta/interactions', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-goog-api-key': key
-          },
-          body: requestBody
-        });
-
-        data = await response.json().catch(() => ({}));
-        if (response.ok) break;
-
-        const retryable = [429, 500, 502, 503, 504].includes(response.status);
-        if (!retryable || attempt === maxAttempts - 1) {
-          const detail = data.error?.message || data.message || `Erro HTTP ${response.status}`;
-          return json(502, {
-            error: `Falha na API Gemini (${response.status}): ${detail}`,
-            retryable,
-            attempts: attempt + 1
-          });
-        }
-
-        const retryAfter = Number(response.headers.get('retry-after'));
-        const waitMs = Number.isFinite(retryAfter) && retryAfter > 0
-          ? Math.min(retryAfter * 1000, 10000)
-          : Math.min(1000 * (2 ** attempt), 8000) + Math.floor(Math.random() * 300);
-        await new Promise(resolve => setTimeout(resolve, waitMs));
-      } catch (err) {
-        lastError = err;
-        if (attempt === maxAttempts - 1) {
-          return json(502, {
-            error: `Não foi possível alcançar o Gemini após ${maxAttempts} tentativas: ${err.message || 'falha de rede'}`,
-            retryable: true,
-            attempts: attempt + 1
-          });
-        }
-        const waitMs = Math.min(1000 * (2 ** attempt), 8000) + Math.floor(Math.random() * 300);
-        await new Promise(resolve => setTimeout(resolve, waitMs));
-      }
-    }
-
-    if (!response || !response.ok) {
-      const detail = data.error?.message || lastError?.message || 'Serviço temporariamente indisponível.';
-      return json(502, { error: `Falha na API Gemini: ${detail}`, retryable: true });
+    if (!response.ok) {
+      const detail = data.error?.message || data.message || `Erro HTTP ${response.status}`;
+      return json(502, { error: `A API Gemini respondeu com erro (${response.status}): ${detail}` });
     }
 
     const reply = String(data.output_text || (data.outputs || [])
@@ -90,21 +54,21 @@ exports.handler = async (event) => {
     if (!reply) return json(502, { error: 'O Gemini recebeu a mensagem, mas não retornou texto. Tente novamente.' });
     return json(200, { reply });
   } catch (error) {
-    return json(500, { error: error.message || 'Erro interno na função FLÁVIA INTELLIGENCE.' });
+    if (error.name === 'AbortError') {
+      return json(504, { error: 'O Gemini demorou mais de 24 segundos para responder. Tente novamente em instantes.' });
+    }
+    return json(502, { error: `Não foi possível alcançar a API Gemini: ${error.message || 'falha de rede'}` });
+  } finally {
+    clearTimeout(timer);
   }
 };
 
 function json(statusCode, payload) {
-  return {
-    statusCode,
-    headers: cors(),
-    body: JSON.stringify(payload)
-  };
+  return { statusCode, headers: cors(), body: JSON.stringify(payload) };
 }
-
 function cors() {
   return {
-    'Content-Type': 'application/json',
+    'Content-Type': 'application/json; charset=utf-8',
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Access-Control-Allow-Methods': 'POST,OPTIONS'
