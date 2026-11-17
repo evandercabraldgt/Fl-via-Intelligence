@@ -73,6 +73,7 @@ exports.handler = async (event) => {
           signal: AbortSignal.timeout(8000)
         });
         rawResponse = await response.text();
+        console.error('RESPOSTA DO GEMINI:', response.status, rawResponse.slice(0, 1500));
       } catch (error) {
         lastError = error.name === 'TimeoutError'
           ? 'O Gemini demorou mais que o limite de espera. Tente novamente.'
