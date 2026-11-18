@@ -1,0 +1,1 @@
+Cloudflare Pages: Framework preset None; Build command vazio; Build output directory public; Root directory vazio. Manter GROQ_API_KEY em Settings > Variables and Secrets > Production. A função da API está em functions/api/flavia-intelligence.js e atende /api/flavia-intelligence.
