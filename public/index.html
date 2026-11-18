@@ -53,6 +53,32 @@ footer{text-align:center;color:var(--muted);padding:22px;font-size:12px}
 </section>
 <section id="criar" class="page panel hidden"><h2>Fábrica de conteúdo</h2><p class="sub">Gere um primeiro rascunho estruturado. Revise antes de publicar.</p>
 <label>Formato</label><select id="formato"><option>Carrossel</option><option>Ganchos e títulos magnéticos</option><option>Post estático</option><option>Legenda estratégica</option><option>Sequência de Stories</option><option>Post para Threads</option><option>Sequência para Threads</option><option>Conversa e respostas para Threads</option><option>Frase autoral</option><option>Calendário editorial</option><option>Planejamento semanal</option><option>SEO para YouTube e Google</option><option>Análise de métricas e conteúdo</option><option>Produto digital ou e-book</option><option>Aula, workshop ou mentoria</option><option>Pesquisa de persona e dores</option><option>Sequência de e-mails e mensagens</option><option>FAQ e tratamento de objeções</option><option>Reaproveitamento de conteúdo</option><option>Diagnóstico de posicionamento</option></select>
+<label>Plataforma de destino</label>
+<select id="plataformaConteudo">
+<option>Instagram Feed</option>
+<option>Instagram Carrossel</option>
+<option>Instagram Reels</option>
+<option>Instagram Stories</option>
+<option>TikTok</option>
+<option>TikTok Fotos e Carrossel</option>
+<option>YouTube Shorts</option>
+<option>YouTube Vídeo Longo</option>
+<option>YouTube Comunidade</option>
+<option>Facebook Feed</option>
+<option>Facebook Carrossel</option>
+<option>Facebook Reels</option>
+<option>Threads</option>
+<option>LinkedIn</option>
+<option>Pinterest</option>
+<option>X / Twitter</option>
+<option>WhatsApp</option>
+<option>Canais do WhatsApp</option>
+<option>Telegram</option>
+<option>Podcast</option>
+<option>Blog ou Site</option>
+<option>E-mail Marketing</option>
+<option>Google Business Profile</option>
+</select>
 <div id="slideControls"><label>Quantidade de telas do carrossel</label><select id="qtdTelas"><option>6</option><option>7</option><option>8</option><option>9</option><option selected>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option><option>20</option></select><p class="small">Escolha de 6 a 20 telas. O roteiro narrativo será ajustado à quantidade escolhida.</p></div>
 <label>Objetivo</label><select id="objetivo"><option>Atração</option><option>Conexão</option><option>Autoridade</option><option>Conversão</option></select>
 <label>Tema central</label><input id="tema" placeholder="Ex.: parar de aceitar migalhas afetivas">
@@ -63,7 +89,27 @@ footer{text-align:center;color:var(--muted);padding:22px;font-size:12px}
 <div class="actions"><button type="button" class="btn" onclick="gerarConteudo()">Criar rascunho</button><button type="button" class="btn secondary" onclick="salvarSaida()">Salvar na biblioteca</button></div><div id="saida" class="output">Seu conteúdo aparecerá aqui.</div><div class="actions"><button type="button" class="btn secondary" onclick="revisarSaida('saida')">Revisar e aprimorar</button></div><div class="actions export-actions"><button type="button" class="btn secondary" onclick="exportarPDF('saida','Conteúdo')">Baixar PDF</button><button type="button" class="btn secondary" onclick="baixarWord('saida','Conteúdo')">Baixar Word</button></div>
 </section>
 <section id="roteiro" class="page panel hidden"><h2>Estúdio de roteiros</h2><p class="sub">Monte uma estrutura inicial para vídeo ou podcast.</p>
-<label>Plataforma</label><select id="plataforma"><option>TikTok</option><option>Instagram Reels</option><option>YouTube Shorts</option><option>YouTube longo</option><option>Threads</option><option>Podcast</option></select>
+<label>Plataforma</label>
+<select id="plataforma">
+<option>TikTok</option>
+<option>Instagram Reels</option>
+<option>Instagram Stories</option>
+<option>Facebook Reels</option>
+<option>Facebook Vídeo</option>
+<option>YouTube Shorts</option>
+<option>YouTube longo</option>
+<option>YouTube Comunidade</option>
+<option>Threads</option>
+<option>LinkedIn</option>
+<option>Pinterest Vídeo</option>
+<option>X / Twitter</option>
+<option>WhatsApp</option>
+<option>Canais do WhatsApp</option>
+<option>Telegram</option>
+<option>Podcast</option>
+<option>Blog ou Site</option>
+<option>E-mail Marketing</option>
+</select>
 <label>Assunto</label><input id="assuntoVideo" placeholder="Qual é a ideia do vídeo?">
 <label>Duração aproximada</label><select id="duracao"><option>30 a 45 segundos</option><option>60 segundos</option><option>3 a 5 minutos</option><option>8 a 12 minutos</option><option>20 a 30 minutos</option></select>
 <div class="actions"><button type="button" class="btn" onclick="gerarRoteiro()">Montar roteiro</button><button type="button" class="btn secondary" onclick="copiar('saidaRoteiro')">Copiar</button></div><div id="saidaRoteiro" class="output">Seu roteiro aparecerá aqui.</div><div class="actions"><button type="button" class="btn secondary" onclick="revisarSaida('saidaRoteiro')">Revisar e aprimorar</button></div><div class="actions export-actions"><button type="button" class="btn secondary" onclick="exportarPDF('saidaRoteiro','Roteiro')">Baixar PDF</button><button type="button" class="btn secondary" onclick="baixarWord('saidaRoteiro','Roteiro')">Baixar Word</button></div>
@@ -210,21 +256,108 @@ function contextoEspecialista(prompt){const escolha=obterEspecialista();const au
 async function consultarFlavia(prompt, outputId){const output=document.getElementById(outputId);output.textContent='A FLÁVIA INTELLIGENCE está criando sua resposta...';const contexto=`MEMÓRIA ESTRATÉGICA DA CRIADORA:\n${obterMemoria()||'Use o contexto-base da marca.'}\n${contextoEspecialista(prompt)}\nSOLICITAÇÃO:\n${prompt}`;try{const res=await fetch('/api/flavia-intelligence',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:contexto,history:[]})});const raw=await res.text();let data={};try{data=JSON.parse(raw)}catch(_){throw new Error('A função devolveu uma resposta inválida. Confira a publicação da função no Cloudflare Pages.')}if(!res.ok)throw new Error((data.error||'Falha ao consultar a inteligência')+(data.detail?' '+data.detail:''));output.textContent=data.reply||'A inteligência não retornou texto.';output.dataset.prompt=prompt;}catch(error){output.textContent='Não foi possível gerar agora: '+error.message;}}
 
 async function gerarConteudo(){
- const f=valor('formato'),o=valor('objetivo'),t=valor('tema'),of=valor('oferta'),tom=valor('tom'),n=Number(valor('qtdTelas')||10);
- const prompt=`Crie uma peça completa para a marca A Taróloga Fora da Caixa.
-FORMATO: ${f}
+ const f=valor('formato');
+ const o=valor('objetivo');
+ const t=valor('tema');
+ const of=valor('oferta');
+ const tom=valor('tom');
+ const n=Number(valor('qtdTelas')||10);
+ const plataforma=valor('plataformaConteudo')||'Instagram Feed';
+
+ const instrucoesFormato = {
+  'Carrossel': `Crie exatamente ${n} telas numeradas. Inclua objetivo estratégico, ideia central, gancho principal, duas opções alternativas de gancho, texto de cada tela, progressão narrativa, legenda complementar, CTA e direção visual individual. Cada tela precisa avançar a história, sem repetição. Adapte o carrossel à plataforma escolhida. Se a plataforma não oferecer carrossel nativo, apresente uma sequência equivalente no formato mais adequado.`,
+  'Ganchos e títulos magnéticos': 'Crie 15 ganchos variados e específicos para a plataforma, priorizando curiosidade, identificação, tensão e descoberta. Não use clickbait vazio.',
+  'Post estático': 'Entregue texto principal, legenda complementar, CTA e direção visual.',
+  'Legenda estratégica': 'Entregue uma legenda completa, com abertura forte, desenvolvimento, identificação, virada, CTA e palavras-chave naturais.',
+  'Sequência de Stories': 'Crie uma sequência de Stories com abertura, interação, desenvolvimento, conexão, prova ou contexto quando houver informação real, e CTA. Sugira enquete ou caixa de pergunta quando fizer sentido.',
+  'Post para Threads': 'Crie uma publicação nativa para Threads, conversacional, autoral, com ponto de vista forte e potencial de gerar conversa.',
+  'Sequência para Threads': 'Crie uma sequência encadeada para Threads, com abertura que desperte curiosidade e progressão de raciocínio até um fechamento marcante.',
+  'Conversa e respostas para Threads': 'Crie uma conversa natural para Threads, com publicação inicial e respostas que aprofundem o assunto sem parecer propaganda.',
+  'Frase autoral': 'Crie uma frase autoral curta e memorável, acompanhada de legenda estratégica e CTA.',
+  'Calendário editorial': 'Crie calendário editorial organizado por dia, tema, objetivo, formato, gancho e CTA.',
+  'Planejamento semanal': 'Crie planejamento semanal equilibrando atração, conexão, autoridade e conversão.',
+  'SEO para YouTube e Google': 'Entregue título otimizado, descrição, palavras-chave, intenção de busca e estrutura de conteúdo. Não prometa posicionamento.',
+  'Análise de métricas e conteúdo': 'Analise somente os dados fornecidos. Se faltarem métricas, peça os dados necessários em vez de inventar resultados.',
+  'Produto digital ou e-book': 'Estruture proposta, público, transformação possível, módulos ou capítulos, entregáveis e plano de divulgação. Não invente garantias ou resultados.',
+  'Aula, workshop ou mentoria': 'Crie estrutura pedagógica, módulos, objetivos, exercícios e sequência de aprendizagem.',
+  'Pesquisa de persona e dores': 'Organize hipóteses de persona, dores, desejos, objeções e linguagem. Diferencie hipótese de dado comprovado.',
+  'Sequência de e-mails e mensagens': 'Crie sequência com assunto, objetivo e texto completo de cada mensagem.',
+  'FAQ e tratamento de objeções': 'Crie perguntas frequentes e respostas claras, éticas e persuasivas, sem promessas inventadas.',
+  'Reaproveitamento de conteúdo': 'Transforme a ideia em formatos diferentes, adaptados às plataformas, sem simplesmente copiar e colar.',
+  'Diagnóstico de posicionamento': 'Analise clareza, diferenciação, público, promessa, coerência e oportunidades. Indique o que é hipótese quando faltarem dados.'
+ };
+
+ const prompt=`Você é a estrategista de conteúdo e comunicação da marca A Taróloga Fora da Caixa, de Flávia Bezerra.
+
+Crie uma peça completa, original e pronta para revisão.
+
+FORMATO SOLICITADO: ${f}
+PLATAFORMA DE DESTINO: ${plataforma}
 OBJETIVO: ${o}
-TEMA: ${t||'Escolha um tema estratégico coerente com a marca e explique a escolha.'}
-OFERTA/DESTINO: ${of||'Não há oferta informada; não invente uma.'}
-TOM: ${tom}
-${f==='Carrossel'?`QUANTIDADE EXATA: ${n} telas. Entregue estratégia, título principal, duas alternativas de gancho, todas as telas numeradas de 1 a ${n}, legenda complementar e direção visual individual para cada tela.`:''}
-Crie conteúdo original, específico, com narrativa progressiva, identificação, descoberta e CTA coerente. Não use textos genéricos nem invente informações comerciais.`;
+TEMA CENTRAL: ${t||'Escolha um tema estratégico coerente com a identidade da marca.'}
+OFERTA OU DESTINO: ${of||'Não há oferta informada. Não invente.'}
+TOM DE VOZ: ${tom}
+
+IDENTIDADE E REGRAS:
+- Preserve a personalidade autoral, direta, provocadora, profunda e humana da marca.
+- Considere o Tarot Sistêmico Ancestral como linguagem central quando o tema pedir, sem forçar sua presença em todo conteúdo.
+- Conecte Tarot, autoconhecimento, padrões emocionais, escolhas e prosperidade quando forem pertinentes.
+- Não transforme interpretações simbólicas em fatos científicos ou previsões garantidas.
+- Não invente preços, depoimentos, credenciais, resultados, estatísticas, garantias ou condições comerciais.
+- Use gancho forte, identificação, tensão, descoberta, virada e CTA coerente.
+- Não entregue texto genérico nem repita a mesma estrutura mecanicamente.
+- Adapte vocabulário, extensão, ritmo, recursos e chamada para ação à plataforma escolhida.
+- Se a rede não tiver carrossel nativo, converta a narrativa em sequência ou formato equivalente adequado. Não afirme que uma função inexistente está disponível.
+
+INSTRUÇÃO ESPECÍFICA DO FORMATO:
+${instrucoesFormato[f]||'Entregue a peça completa, com estrutura clara, narrativa consistente e CTA apropriado.'}
+
+ENTREGA:
+Organize com títulos e separações claras. Se houver várias peças, numere. Finalize com uma breve justificativa da adaptação à plataforma.
+`;
  await consultarFlavia(prompt,'saida');
 }
+
 async function gerarRoteiro(){
- const p=valor('plataforma'),a=valor('assuntoVideo'),d=valor('duracao');
- const instrucaoThreads = p==='Threads' ? 'Crie conteúdo nativo para Threads, não um roteiro audiovisual. Entregue uma publicação avulsa forte e, quando o tema pedir, uma sequência encadeada ou uma conversa com respostas. Priorize escrita autoral, primeira pessoa quando adequada, frases naturais, compartilhamento e conversa genuína. Não use hashtags em excesso nem CTA comercial forçada.' : 'Comece pela tensão, sem apresentação. Entregue gancho, texto falado, cenas ou indicações visuais quando úteis, virada, fechamento, CTA, título e descrição quando fizer sentido. Adapte ritmo e profundidade à plataforma e duração.';
- await consultarFlavia(`Crie conteúdo completo para a plataforma ${p}. Duração aproximada: ${d}. Tema: ${a||'Escolha um tema coerente com o posicionamento da marca.'}. ${instrucaoThreads}`, 'saidaRoteiro');
+ const p=valor('plataforma');
+ const a=valor('assuntoVideo');
+ const d=valor('duracao');
+
+ const ehTexto=/Threads|LinkedIn|X.*Twitter|WhatsApp|Telegram|Comunidade|Blog|E-mail/i.test(p);
+ const instrucao = ehTexto
+  ? `Esta plataforma é predominantemente textual neste formato. NÃO force roteiro audiovisual. Crie uma publicação ou sequência nativa para ${p}, com abertura forte, desenvolvimento, conversa e CTA adequado.`
+  : p==='Podcast'
+   ? 'Crie roteiro falado para podcast, com abertura, contexto, blocos de desenvolvimento, transições, reflexão, conclusão e convite para interação. Inclua sugestões de pausas e ritmo.'
+   : 'Crie roteiro audiovisual com gancho imediato, texto falado, cenas, indicações visuais, ritmo, cortes, virada narrativa, fechamento e CTA. Evite introduções longas.';
+
+ const prompt=`Você é roteirista e estrategista multiplataforma da marca A Taróloga Fora da Caixa.
+
+PLATAFORMA: ${p}
+TEMA: ${a||'Escolha um tema coerente com a identidade da marca.'}
+DURAÇÃO OU EXTENSÃO: ${d}
+
+${instrucao}
+
+REGRAS:
+- Adapte o roteiro ao comportamento e ao formato da plataforma escolhida.
+- Não copie o mesmo roteiro para todas as redes.
+- Comece pela tensão, curiosidade ou identificação, sem apresentação desnecessária.
+- Construa progressão narrativa, descoberta e uma virada significativa.
+- Preserve a voz direta, autoral, profunda e provocadora da marca.
+- Quando pertinente, conecte Tarot Sistêmico Ancestral, padrões emocionais, escolhas e prosperidade.
+- Não invente dados, depoimentos, preços ou promessas.
+- Não apresente simbolismo do Tarot como ciência ou previsão garantida.
+
+ENTREGUE:
+1. Objetivo do conteúdo.
+2. Gancho principal e duas alternativas.
+3. Roteiro completo ou sequência textual, conforme a plataforma.
+4. Indicações de cena, tela, ritmo ou edição quando forem pertinentes.
+5. Fechamento e CTA.
+6. Título, descrição e palavras-chave quando fizer sentido.
+7. Sugestão de reaproveitamento em outra plataforma, sem duplicar o conteúdo.
+`;
+ await consultarFlavia(prompt,'saidaRoteiro');
 }
 async function gerarPagina(){
  const p=valor('produto'),tr=valor('transformacao'),pr=valor('preco');
