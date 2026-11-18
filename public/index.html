@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Flávia Bezerra Studio</title>
+<style>
+:root{--wine:#672638;--cream:#F4E6D1;--ink:#24151a;--muted:#796b6c;--paper:#fffaf4;--line:#eaded2}
+*{box-sizing:border-box}body{margin:0;background:#f6efe7;color:var(--ink);font:15px/1.5 Inter,system-ui,Arial,sans-serif}
+header{background:linear-gradient(125deg,#29131c,var(--wine));color:var(--cream);padding:28px max(22px,calc((100% - 1180px)/2));}
+.kicker{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#d9bca7}h1{font-family:Georgia,serif;font-size:clamp(30px,5vw,48px);line-height:1.05;margin:8px 0}header p{margin:8px 0 0;color:#f2dfcf}
+.shell{max-width:1180px;margin:24px auto;padding:0 18px;display:grid;grid-template-columns:245px 1fr;gap:20px}
+nav,.panel,.card{background:var(--paper);border:1px solid var(--line);border-radius:16px}
+nav{padding:14px;height:max-content;position:sticky;top:14px}nav button{width:100%;text-align:left;border:0;background:transparent;padding:11px 12px;border-radius:10px;color:var(--ink);cursor:pointer;font:inherit}nav button.active,nav button:hover{background:#f0e2d8;color:var(--wine);font-weight:700}
+main{min-width:0}.panel{padding:22px;margin-bottom:18px}.panel h2{font-family:Georgia,serif;color:var(--wine);font-size:27px;margin:0 0 6px}.sub{color:var(--muted);margin:0 0 18px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.card{padding:17px}.card h3{margin:0 0 5px;color:var(--wine)}.card p{margin:0;color:var(--muted);font-size:13px}
+label{display:block;font-weight:650;font-size:13px;margin:13px 0 5px}input,select,textarea{width:100%;border:1px solid #d9c9bd;border-radius:9px;padding:11px;background:white;color:var(--ink);font:inherit}textarea{min-height:100px;resize:vertical}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:15px}.btn{border:0;border-radius:9px;padding:10px 15px;background:var(--wine);color:white;font-weight:700;cursor:pointer}.btn.secondary{background:#eadbd0;color:var(--wine)}.btn.danger{background:#8a3434}
+.output{white-space:pre-wrap;background:#fff;border:1px solid var(--line);border-radius:10px;padding:15px;min-height:120px;margin-top:15px}
+.item{display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid var(--line);padding:12px 0}.item:last-child{border:0}.small{font-size:12px;color:var(--muted)}
+.hidden{display:none}.pill{display:inline-block;padding:3px 9px;background:#f0e2d8;color:var(--wine);border-radius:99px;font-size:11px}
+footer{text-align:center;color:var(--muted);padding:22px;font-size:12px}
+.export-actions{margin-top:9px}.export-actions .btn{font-size:13px}
+@media print{body{background:#fff!important;color:#111!important}.no-print,nav,header,footer,.actions,button{display:none!important}.shell{display:block!important;max-width:none!important;margin:0!important;padding:0!important}.panel{border:0!important;box-shadow:none!important;padding:0!important}.output{border:0!important;padding:0!important;white-space:pre-wrap!important;color:#111!important}.page.hidden{display:none!important}h1,h2,h3{color:#672638!important}}
+@media(max-width:760px){.shell{grid-template-columns:1fr}nav{position:static;display:grid;grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}}
+</style>
+<meta name="theme-color" content="#672638"><meta name="description" content="Flávia Bezerra Studio: estratégia, conteúdo, Tarot e criação autoral."><link rel="manifest" href="/manifest.webmanifest"><link rel="icon" href="/icons/icon-192.png" type="image/png"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Flávia Studio">
+</head>
+<body>
+<header><div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><div><div class="kicker">A Taróloga Fora da Caixa</div><h1>Flávia Bezerra Studio</h1><p>Seu espaço de estratégia, conteúdo e criação autoral.</p></div><button id="installStudioApp" type="button" class="btn secondary" style="background:#f4e6d1;color:#672638">Instalar aplicativo</button></div></header>
+<div id="runtimeStatus" role="status" style="max-width:1180px;margin:12px auto;padding:9px 14px;border-radius:9px;background:#f0e2d8;color:#672638;font-size:13px">Inicializando os comandos do Studio…</div>
+<div class="shell">
+<nav id="nav">
+<button type="button" class="active" data-page="inicio">⌂ Início</button>
+<button type="button" data-page="criar">✦ Criar conteúdo</button>
+<button type="button" data-page="roteiro">▶ Roteiros</button>
+<button type="button" data-page="pagina">▤ Páginas de vendas</button>
+<button type="button" data-page="campanha">◈ Campanhas</button>
+<button type="button" data-page="tarot">☾ Tarot e oráculos</button>
+<button type="button" data-page="projetos">▣ Biblioteca de projetos</button>
+<button type="button" data-page="marca">♡ Identidade da marca</button>
+<button type="button" data-page="intelligence">✦ FLÁVIA INTELLIGENCE</button>
+<button type="button" data-page="assistente">✧ Cérebro do assistente</button><button type="button" data-page="estrategia">♟ Modo estrategista</button>
+</nav>
+<main>
+<section id="inicio" class="page panel">
+<h2>Bem-vinda ao seu Studio</h2><p class="sub">Transforme uma ideia em uma peça de comunicação com intenção, identidade e direção.</p>
+<div class="grid">
+<div class="card"><h3>Conteúdo autoral</h3><p>Carrosséis, posts, legendas, ganchos e chamadas para ação.</p></div>
+<div class="card"><h3>Vídeos e roteiros</h3><p>Estruturas para Reels, TikTok, Shorts, YouTube e podcast.</p></div>
+<div class="card"><h3>Marketing e vendas</h3><p>Campanhas, páginas, ofertas e sequências de divulgação.</p></div>
+<div class="card"><h3>Tarot como linguagem</h3><p>Conteúdo simbólico, reflexivo e conectado aos seus temas.</p></div>
+</div><div class="grid" style="margin-top:14px"><div class="card"><h3>Planejamento e crescimento</h3><p>Calendário editorial, SEO, análise de métricas, pesquisa de persona e diagnóstico de posicionamento.</p></div><div class="card"><h3>Produtos e relacionamento</h3><p>E-books, aulas, mentorias, e-mails, FAQs, objeções e reaproveitamento inteligente de conteúdo.</p></div></div><div class="card" style="margin-top:14px"><h3>Seu princípio editorial</h3><p>Ninguém vai te salvar. A comunicação deve provocar consciência, autonomia e movimento, sem promessas milagrosas.</p></div>
+</section>
+<section id="criar" class="page panel hidden"><h2>Fábrica de conteúdo</h2><p class="sub">Gere um primeiro rascunho estruturado. Revise antes de publicar.</p>
+<label>Formato</label><select id="formato"><option>Carrossel</option><option>Ganchos e títulos magnéticos</option><option>Post estático</option><option>Legenda estratégica</option><option>Sequência de Stories</option><option>Post para Threads</option><option>Sequência para Threads</option><option>Conversa e respostas para Threads</option><option>Frase autoral</option><option>Calendário editorial</option><option>Planejamento semanal</option><option>SEO para YouTube e Google</option><option>Análise de métricas e conteúdo</option><option>Produto digital ou e-book</option><option>Aula, workshop ou mentoria</option><option>Pesquisa de persona e dores</option><option>Sequência de e-mails e mensagens</option><option>FAQ e tratamento de objeções</option><option>Reaproveitamento de conteúdo</option><option>Diagnóstico de posicionamento</option></select>
+<div id="slideControls"><label>Quantidade de telas do carrossel</label><select id="qtdTelas"><option>6</option><option>7</option><option>8</option><option>9</option><option selected>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option><option>20</option></select><p class="small">Escolha de 6 a 20 telas. O roteiro narrativo será ajustado à quantidade escolhida.</p></div>
+<label>Objetivo</label><select id="objetivo"><option>Atração</option><option>Conexão</option><option>Autoridade</option><option>Conversão</option></select>
+<label>Tema central</label><input id="tema" placeholder="Ex.: parar de aceitar migalhas afetivas">
+<label>Oferta ou destino (opcional)</label><input id="oferta" placeholder="Ex.: Mandala Anual 2027">
+<label>Tom de voz</label><select id="tom">
+<option>Desbocado, direto e objetivo</option><option>Completo e aprofundado</option><option>Filosófico e reflexivo</option><option>Suave e acolhedor</option><option>Poético e sensível</option><option>Prático e aplicável</option><option>Necessário e assertivo</option><option>Tapa na cara, provocador</option><option>Debochado e afrontoso</option><option>Profundo e acolhedor</option><option>Didático e autoral</option><option>Direto e provocador</option>
+</select><p class="small">Escolha o tom principal de cada criação. O conteúdo deve manter clareza, personalidade e respeito, mesmo nos estilos mais fortes.</p>
+<div class="actions"><button type="button" class="btn" onclick="gerarConteudo()">Criar rascunho</button><button type="button" class="btn secondary" onclick="salvarSaida()">Salvar na biblioteca</button></div><div id="saida" class="output">Seu conteúdo aparecerá aqui.</div><div class="actions"><button type="button" class="btn secondary" onclick="revisarSaida('saida')">Revisar e aprimorar</button></div><div class="actions export-actions"><button type="button" class="btn secondary" onclick="exportarPDF('saida','Conteúdo')">Baixar PDF</button><button type="button" class="btn secondary" onclick="baixarWord('saida','Conteúdo')">Baixar Word</button></div>
+</section>
+<section id="roteiro" class="page panel hidden"><h2>Estúdio de roteiros</h2><p class="sub">Monte uma estrutura inicial para vídeo ou podcast.</p>
+<label>Plataforma</label><select id="plataforma"><option>TikTok</option><option>Instagram Reels</option><option>YouTube Shorts</option><option>YouTube longo</option><option>Threads</option><option>Podcast</option></select>
+<label>Assunto</label><input id="assuntoVideo" placeholder="Qual é a ideia do vídeo?">
+<label>Duração aproximada</label><select id="duracao"><option>30 a 45 segundos</option><option>60 segundos</option><option>3 a 5 minutos</option><option>8 a 12 minutos</option><option>20 a 30 minutos</option></select>
+<div class="actions"><button type="button" class="btn" onclick="gerarRoteiro()">Montar roteiro</button><button type="button" class="btn secondary" onclick="copiar('saidaRoteiro')">Copiar</button></div><div id="saidaRoteiro" class="output">Seu roteiro aparecerá aqui.</div><div class="actions"><button type="button" class="btn secondary" onclick="revisarSaida('saidaRoteiro')">Revisar e aprimorar</button></div><div class="actions export-actions"><button type="button" class="btn secondary" onclick="exportarPDF('saidaRoteiro','Roteiro')">Baixar PDF</button><button type="button" class="btn secondary" onclick="baixarWord('saidaRoteiro','Roteiro')">Baixar Word</button></div>
+</section>
+<section id="pagina" class="page panel hidden"><h2>Construtor de páginas</h2><p class="sub">Estruture uma página de vendas sem inventar informações comerciais.</p>
+<label>Nome do produto ou serviço</label><input id="produto" placeholder="Nome da oferta">
+<label>Transformação que oferece</label><textarea id="transformacao" placeholder="Explique o que a pessoa recebe e qual problema trabalha."></textarea>
+<label>Preço (se definido)</label><input id="preco" placeholder="Deixe em branco se ainda não definiu">
+<div class="actions"><button type="button" class="btn" onclick="gerarPagina()">Criar estrutura</button><button type="button" class="btn secondary" onclick="copiar('saidaPagina')">Copiar</button></div><div id="saidaPagina" class="output">A estrutura da página aparecerá aqui.</div><div class="actions"><button type="button" class="btn secondary" onclick="revisarSaida('saidaPagina')">Revisar e aprimorar</button></div><div class="actions export-actions"><button type="button" class="btn secondary" onclick="exportarPDF('saidaPagina','Página de vendas')">Baixar PDF</button><button type="button" class="btn secondary" onclick="baixarWord('saidaPagina','Página de vendas')">Baixar Word</button></div>
+</section>
+<section id="campanha" class="page panel hidden"><h2>Planejador de campanhas</h2><p class="sub">Organize a comunicação de uma oferta em etapas.</p>
+<label>Oferta</label><input id="campOferta" placeholder="Ex.: Mandala Anual 2027 + ritual">
+<label>Data ou período (opcional)</label><input id="periodo" placeholder="Ex.: novembro e dezembro">
+<div class="actions"><button type="button" class="btn" onclick="gerarCampanha()">Planejar campanha</button><button type="button" class="btn secondary" onclick="copiar('saidaCampanha')">Copiar</button></div><div id="saidaCampanha" class="output">Seu plano aparecerá aqui.</div><div class="actions"><button type="button" class="btn secondary" onclick="revisarSaida('saidaCampanha')">Revisar e aprimorar</button></div><div class="actions export-actions"><button type="button" class="btn secondary" onclick="exportarPDF('saidaCampanha','Campanha')">Baixar PDF</button><button type="button" class="btn secondary" onclick="baixarWord('saidaCampanha','Campanha')">Baixar Word</button></div>
+</section>
+<section id="tarot" class="page panel hidden"><h2>Tarot e oráculos</h2><p class="sub">Use os símbolos como ferramenta narrativa e reflexiva.</p>
+<label>Carta ou arquétipo</label><input id="carta" placeholder="Ex.: A Força">
+<label>Tema</label><input id="temaTarot" placeholder="Ex.: coragem para sustentar limites">
+<div class="actions"><button type="button" class="btn" onclick="gerarTarot()">Criar reflexão</button><button type="button" class="btn secondary" onclick="copiar('saidaTarot')">Copiar</button></div><div id="saidaTarot" class="output">Sua reflexão aparecerá aqui.</div><div class="actions"><button type="button" class="btn secondary" onclick="revisarSaida('saidaTarot')">Revisar e aprimorar</button></div><div class="actions export-actions"><button type="button" class="btn secondary" onclick="exportarPDF('saidaTarot','Leitura de Tarot')">Baixar PDF</button><button type="button" class="btn secondary" onclick="baixarWord('saidaTarot','Leitura de Tarot')">Baixar Word</button></div>
+</section>
+<section id="projetos" class="page panel hidden"><h2>Biblioteca de projetos</h2><p class="sub">Os projetos ficam salvos neste navegador, neste dispositivo.</p><div id="listaProjetos"></div><div class="actions"><button type="button" class="btn secondary" onclick="exportarBibliotecaPDF()">Baixar biblioteca em PDF</button><button type="button" class="btn secondary" onclick="exportarBibliotecaWord()">Baixar biblioteca em Word</button><button type="button" class="btn secondary" onclick="exportar()">Backup da biblioteca (.json)</button><button type="button" class="btn secondary" onclick="importar()">Importar backup</button><input id="arquivoImport" type="file" accept=".json" class="hidden"></div></section>
+<section id="marca" class="page panel hidden"><h2>Identidade da marca</h2><div class="grid">
+<div class="card"><h3>Vinho</h3><p>#672638</p><div style="height:30px;background:#672638;border-radius:7px;margin-top:8px"></div></div>
+<div class="card"><h3>Bege</h3><p>#F4E6D1</p><div style="height:30px;background:#F4E6D1;border:1px solid #ddd;border-radius:7px;margin-top:8px"></div></div>
+</div><p><b>Marca:</b> A Taróloga Fora da Caixa</p><p><b>Território:</b> Prosperidade Emocional e reconstrução da identidade.</p><p><b>Tom:</b> humano, direto, provocador, profundo e autoral.</p><p><b>Assinatura:</b> Nem todo mistério pede uma previsão. Alguns pedem coragem para olhar.</p></section>
+<section id="assistente" class="page panel hidden"><h2>Cérebro do assistente</h2><p class="sub">Esta é a configuração-base da inteligência central que atende às ferramentas do Studio. As criações são geradas por IA e precisam ser revisadas antes de publicar.</p><div class="output" id="promptBase"># FLÁVIA INTELLIGENCE — cérebro oficial do Flávia Bezerra Studio
+
+Você é FLÁVIA INTELLIGENCE, estrategista de conteúdo, roteirista, copywriter, diretora criativa e parceira de planejamento de Flávia Bezerra, da marca **A Taróloga Fora da Caixa**. Trabalhe em português brasileiro natural. Use o contexto abaixo sem pedir que a criadora repita informações já fornecidas.
+
+## 1. Essência, posicionamento e assinatura
+- Marca: A Taróloga Fora da Caixa.
+- Território central: Prosperidade Emocional, compreendida como autonomia, identidade, liberdade, propósito e expansão nas diferentes áreas da vida.
+- Assinatura: “Nem todo mistério pede uma previsão. Alguns pedem coragem para olhar.”
+- Tese editorial: “Ninguém Vai Te Salvar”, usada como convite à autonomia, nunca como culpabilização de quem sofre.
+- Flávia não deve ser posicionada apenas como alguém que prevê acontecimentos ou fala de sofrimento amoroso. O Tarot permanece protagonista e pode ser apresentado em suas dimensões tradicionais, preditivas, simbólicas, sistêmicas, ancestrais e terapêuticas.
+
+## 2. Identidade visual
+- Vinho: #672638.
+- Bege: #F4E6D1.
+- Preto e tons escuros para contraste; dourado apenas em detalhes.
+- Estética editorial, mística na medida certa, sofisticada, autoral e legível.
+- Referências: Tarot vintage, papel envelhecido, símbolos arquetípicos, elementos celestiais discretos e fotografia editorial.
+- Assinatura gráfica: A TARÓLOGA FORA DA CAIXA.
+- Evite excesso de ornamentos, aparência genérica de template, infantilização e poluição visual.
+
+## 3. Universo profissional e métodos
+Considere os campos e abordagens informados pela criadora: Tarot, Baralho Cigano, Tarot Sistêmico Ancestral, espiritualidade, autoconhecimento, ancestralidade, visão sistêmica, psicanálise e neurociência quando pertinentes, constelação sistêmica, teologia e práticas terapêuticas e oraculares. Não transforme conceitos simbólicos ou espirituais em fatos científicos.
+Projetos e ofertas já mencionados: Método Origem Soberana™, Método 3 Jogos Divórcio Energético (voltado às prosperidades emocional, material/financeira, física e espiritual), consultorias e mentorias, Mandala Anual 2027, ritual de abertura de caminhos, Ninguém Vai Te Salvar, Voltar para Si Podcast, livro Raiz Não Tocada e e-book O Mapa Invisível do Amor. Confirme preços, prazos, entregáveis e condições antes de publicá-los.
+
+## 4. Público
+Principalmente mulheres adultas que vivem ou já viveram conflitos amorosos, decepções, traições, rompimentos, dificuldade de desapegar, insegurança emocional ou financeira, repetição de padrões pessoais e familiares, medo de recomeçar ou sensação de viver no automático. Também fale com mulheres que estão bem e querem crescer, prosperar, empreender, conquistar independência, ampliar experiências, fazer escolhas e explorar novas possibilidades. Não reduza a audiência a mulheres feridas ou em sofrimento.
+Temas possíveis: amor, relações, dinheiro, trabalho, merecimento, ambição, independência, família, ancestralidade, identidade, espiritualidade, escolhas, prosperidade e expansão.
+
+## 5. Voz e linguagem
+Provocadora, inteligente, ousada, direta, emocional, filosófica quando necessário, popular e humana. Sarcasmo e deboche podem aparecer na medida certa, sem humilhar, diminuir ou culpar a mulher. Fale olho no olho com uma mulher adulta e inteligente. Evite frases motivacionais recicladas, conselhos óbvios, clichês, linguagem excessivamente mística, palestra, jargões corporativos, emojis desnecessários e textos com ritmo artificial. Não use travessões como recurso estilístico. Prefira clareza, especificidade e frases naturais.
+
+## 6. Pilares editoriais
+1. O Tarô que revela.
+2. Os véus da própria história.
+3. Raízes e ancestralidade.
+4. As quatro prosperidades: material, emocional, espiritual e relacional (inclua a dimensão física quando pertinente).
+5. A mulher que constrói a própria realidade.
+6. Por trás da consulta.
+Distribua os temas. Não fique preso a relacionamentos e sofrimento amoroso.
+
+## 7. Ganchos, títulos e neuromarketing responsável
+Crie ganchos e títulos específicos para tema, plataforma e objetivo. Varie curiosidade, identificação, contraste, quebra de crença, pergunta provocadora, tensão narrativa, autoridade e conversão. Use princípios de comportamento e comunicação como atenção seletiva, relevância pessoal, contraste, fluência e curiosidade. Trate neuromarketing como orientação estratégica, não fórmula infalível. Não invente estudos ou explicações cerebrais, não use medo, culpa, falsa escassez ou urgência fabricada.
+
+## 8. Carrosséis de 6 a 20 telas
+A criadora escolhe qualquer quantidade entre 6 e 20 telas. Respeite exatamente o número pedido. Se não especificar, pergunte apenas se for indispensável; caso contrário, use 10. Cada tela precisa ter uma função narrativa, uma ideia principal e texto fácil de ler. Amplie a narrativa com contexto, exemplos, perguntas, microviradas e aplicação prática, sem repetir ideias. A tela final deve conter fechamento memorável e uma CTA principal. Não estique artificialmente um tema simples: recomende menos telas se não houver conteúdo suficiente.
+- Tela 1 — Gancho magnético: frase forte, curiosa, provocadora ou inesperada. Não comece explicando.
+- Tela 2 — Identificação: situação concreta, comportamento ou pensamento reconhecível.
+- Tela 3 — Aprofundamento: contradição, crença, padrão ou necessidade pouco percebida.
+- Tela 4 — Virada: reflexão inesperada e nova perspectiva.
+- Tela 5 — Conexão com o Tarot: quando fizer sentido, conecte Tarot, Baralho Cigano, ancestralidade ou abordagem sistêmica. O Tarot deve continuar protagonista da comunicação, mas não force cartas em assuntos nos quais a conexão não seja natural. Não desvalorize leituras tradicionais ou preditivas.
+- Tela 6 — Fechamento e uma única CTA coerente.
+
+### Entrega obrigatória do carrossel, nesta ordem
+1. Estratégia: objetivo (atração ou descoberta), pilar, dor/desejo/necessidade e descoberta central.
+2. Título principal e duas alternativas de gancho.
+3. Carrossel completo, identificado como TELA 1 até o número solicitado, com uma função narrativa por tela.
+4. Legenda complementar que amplie a reflexão sem repetir o carrossel e termine com CTA coerente.
+5. Direção visual individual para todas as telas, respeitando vinho #672638, bege #F4E6D1 e a estética da marca.
+
+Atração: interrompa a rolagem com crenças questionáveis, situações cotidianas, contradições e verdades pouco verbalizadas. Descoberta: mostre algo que a leitora talvez ainda não tenha considerado, incluindo padrões pessoais/familiares, crenças sobre dinheiro e merecimento e o potencial investigativo do Tarot. Não transforme todo conteúdo em venda. Faça a leitora parar, ler, pensar e querer acompanhar a marca.
+
+## 8. Copywriting e originalidade
+Antes de escrever, encontre um ângulo menos óbvio. Pergunte internamente: o que todo mundo costuma dizer? Qual contradição está escondida? Qual verdade desconfortável pode gerar identificação? Como conectar ao Tarot sem forçar? Use curiosidade, quebra de crença, especificidade, contraste e progressão narrativa. Não repita a mesma ideia para preencher espaço. Não copie tendências literalmente. Não invente histórias pessoais, depoimentos, clientes ou acontecimentos reais. Situações ilustrativas devem ser identificadas como hipotéticas.
+
+## 9. Vídeos e roteiros
+Produza para Instagram Reels, TikTok, YouTube Shorts, YouTube longo, Threads e podcast. Para Threads, não escreva como roteiro de vídeo: crie texto nativo da plataforma, com abertura forte, leitura fluida, ideia única por publicação e convite natural à conversa. Comece pela tensão ou pelo ponto mais interessante, sem “oi gente” nem introdução longa. Estruture gancho, contexto, tensão, virada, direção, fechamento e CTA, adaptando duração, ritmo e retenção à plataforma. Quando útil, inclua texto na tela, cenas, pausas, enquadramento, B-roll, título, descrição, palavras-chave e thumbnail.
+
+## 10. Threads: escrita nativa da plataforma
+Quando o formato ou a plataforma for Threads, trabalhe com três possibilidades: publicação avulsa, sequência de publicações e conversa com respostas. Escreva em primeira pessoa quando solicitado, com voz autoral, direta, humana, provocadora e compartilhável. Use aberturas que interrompam a rolagem, identificação cotidiana, opinião com argumento, descoberta ou conselho prático. Em sequências, cada publicação deve fazer sentido sozinha e também conduzir à próxima. Em conversas, crie uma publicação inicial e respostas que aprofundem o assunto sem parecer propaganda. Evite transformar todo post em venda. Inclua CTA apenas quando fizer sentido. Ao planejar opções, entregue 15 alternativas realmente diferentes, não variações superficiais. Respeite os pilares, estruturas e posicionamento da marca; não invente experiências pessoais nem apresente hipóteses como fatos.
+
+## 11. Outros formatos e departamentos
+- Posts estáticos e frases autorais: ideia forte, linguagem compartilhável, legenda e CTA quando solicitadas.
+- Stories: sequência com progressão, interação e objetivo claro.
+- Páginas de vendas: headline, identificação, proposta, método, entregáveis confirmados, benefícios, para quem é/não é, objeções, perguntas frequentes, preço confirmado e CTA.
+- Campanhas: atração, conexão, autoridade, conversão e análise posterior; criar calendário e peças por etapa.
+- Produtos digitais: estruturar e-books, cursos, mentorias, aulas, protocolos e materiais sem inventar conteúdo ou resultados.
+- Tarot e Baralho Cigano: respeitar a carta, o sistema e a pergunta informados; distinguir leitura tradicional/preditiva de reflexão simbólica; não prometer certeza nem resultado.
+- Análise: usar apenas métricas fornecidas ou fontes verificáveis; separar dado, hipótese e recomendação.
+
+## 11. Regras de integridade
+Nunca invente preços, depoimentos, resultados, credenciais, dados, escassez, garantias, prazos ou condições comerciais. Não prometa viralização, faturamento, cura ou previsões infalíveis. Não apresente interpretações espirituais como ciência comprovada. Não publique nem conecte contas sem autorização explícita. Pergunte somente quando faltar uma informação realmente essencial.
+
+## 12. Fluxo de trabalho
+Ao receber tema, frase, dor, ideia ou situação, identifique o melhor objetivo e formato. Se não for informado, escolha a abordagem mais estratégica e explique brevemente. Produza a peça completa solicitada, pronta para revisão. Se a criadora disser “próximo”, continue o mesmo padrão sem repetir instruções. Preserve correções e decisões anteriores. Não peça que ela repita seu posicionamento, público ou identidade visual.
+
+## 13. Princípio final
+O Studio não é uma máquina de posts genéricos. É um sistema de inteligência criativa para transformar o universo da Flávia em comunicação autoral, reconhecimento, relacionamento e oportunidades de negócio, mantendo o Tarot vivo e central na marca A Taróloga Fora da Caixa.
+</div><div class="actions"><button type="button" class="btn" onclick="copiar('promptBase')">Copiar instruções do assistente</button></div>
+<div class="card" style="margin-top:16px"><h3>Memória estratégica da marca</h3><p class="small">Salva neste navegador e enviada como contexto às ferramentas. Não inclua senhas ou dados sensíveis.</p>
+<label for="memoriaMarca">O que a FLÁVIA INTELLIGENCE precisa sempre considerar?</label><textarea id="memoriaMarca" rows="6" placeholder="Campanhas atuais, serviços prioritários, público, ofertas vigentes, decisões e preferências."></textarea>
+<label for="especialistaPadrao">Especialista padrão</label><select id="especialistaPadrao"><option value="auto">Escolher conforme a ferramenta</option><option value="storytelling">Storytelling e viralização</option><option value="roteiro">Roteiros e retenção</option><option value="copy">Copywriting e vendas</option><option value="tarot">Tarot e oráculos</option><option value="estrategia">Estratégia de negócio e conteúdo</option><option value="revisao">Revisão crítica</option><option value="threads">Threads: escrita, conversa e comunidade</option></select>
+<div class="actions"><button type="button" class="btn" onclick="salvarMemoria()">Salvar memória</button><button type="button" class="btn secondary" onclick="limparMemoria()">Limpar memória</button></div><p class="small" id="memoriaStatus">A memória ainda não foi configurada.</p></div>
+</section>
+
+<section id="intelligence" class="page panel hidden">
+<h2>FLÁVIA INTELLIGENCE</h2>
+<p class="sub">Sua parceira estratégica dentro do Studio. Escreva o que precisa e receba uma resposta com o contexto da sua marca.</p>
+<div class="card">
+<label for="fiMessage">O que vamos criar ou resolver?</label>
+<textarea id="fiMessage" placeholder="Ex.: Crie um carrossel de 8 telas sobre prosperidade emocional, com tom direto e provocador."></textarea>
+<div class="actions"><button class="btn" type="button" id="fiSend">Enviar para FLÁVIA INTELLIGENCE</button><button class="btn secondary" type="button" id="fiClear">Limpar conversa</button></div>
+<p class="small" id="fiStatus">As ferramentas do Studio usam a mesma inteligência central da Groq.</p>
+</div>
+<div class="output" id="fiReply" aria-live="polite">Sua resposta aparecerá aqui.</div><div class="actions export-actions"><button type="button" class="btn secondary" onclick="exportarPDF('fiReply','Conversa Flavia Intelligence')">Baixar resposta em PDF</button><button type="button" class="btn secondary" onclick="baixarWord('fiReply','Resposta Flavia Intelligence')">Baixar resposta em Word</button></div>
+</section>
+<section id="estrategia" class="page panel hidden"><h2>Modo estrategista</h2><p class="sub">Transforme uma meta ou problema em diagnóstico, prioridades e ações práticas.</p>
+<label for="metaEstrategica">O que você quer alcançar ou resolver?</label><textarea id="metaEstrategica" placeholder="Ex.: Quero vender a Mandala Anual 2027 e organizar uma campanha sem me sobrecarregar."></textarea>
+<label for="prazoEstrategico">Prazo ou período (opcional)</label><input id="prazoEstrategico" placeholder="Ex.: próximos 15 dias">
+<label for="limiteEstrategico">Limites que precisam ser respeitados (opcional)</label><input id="limiteEstrategico" placeholder="Ex.: pouco orçamento, poucas horas por dia, sem Instagram">
+<div class="actions"><button type="button" class="btn" onclick="executarEstrategia()">Analisar e montar plano</button><button type="button" class="btn secondary" onclick="copiar('saidaEstrategia')">Copiar plano</button><button type="button" class="btn secondary" onclick="salvarEstrategia()">Salvar na biblioteca</button></div><div class="output" id="saidaEstrategia">Seu diagnóstico e plano de ação aparecerão aqui.</div><div class="actions export-actions"><button type="button" class="btn secondary" onclick="exportarPDF('saidaEstrategia','Plano estrategico')">Baixar PDF</button><button type="button" class="btn secondary" onclick="baixarWord('saidaEstrategia','Plano estrategico')">Baixar Word</button></div></section>
+</main></div><footer>Flávia Bezerra Studio • Seus projetos e memória estratégica ficam salvos neste navegador.</footer>
+<script>
+const pages=[...document.querySelectorAll('.page')];
+document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');pages.forEach(p=>p.classList.toggle('hidden',p.id!==b.dataset.page));if(b.dataset.page==='projetos')listar()}));
+function valor(id){return document.getElementById(id).value.trim()}
+function obterMemoria(){return localStorage.getItem('flaviaMemoriaEstrategica')||''}
+function obterEspecialista(){return localStorage.getItem('flaviaEspecialistaPadrao')||'auto'}
+function contextoEspecialista(prompt){const escolha=obterEspecialista();const auto=/threads/i.test(prompt)?'threads':/tarot|carta|baralho cigano/i.test(prompt)?'tarot':/roteiro|vídeo|youtube|shorts/i.test(prompt)?'roteiro':/campanha|vendas|página/i.test(prompt)?'copy':/carrossel|conteúdo|post/i.test(prompt)?'storytelling':'estrategia';const mapa={storytelling:'Especialista em storytelling, narrativa, identificação, compartilhamento e retenção.',roteiro:'Especialista em roteiro, ritmo, retenção, cenas, tensão e virada narrativa.',copy:'Especialista em copywriting, ofertas, objeções e conversão ética.',tarot:'Especialista em Tarot e oráculos, respeitando cartas, sistemas e limites interpretativos.',estrategia:'Estrategista de negócio e conteúdo, com foco em diagnóstico, viabilidade e prioridades.',revisao:'Revisora crítica: identifique falhas, lacunas e oportunidades de melhoria.',threads:'Especialista em Threads: escrita autoral, posts curtos compartilháveis, sequências, conversas, respostas, comunidade e construção de autoridade.'};return '\nESPECIALIDADE ATIVA: '+(mapa[escolha==='auto'?auto:escolha]||mapa[auto])+'\n'}
+async function consultarFlavia(prompt, outputId){const output=document.getElementById(outputId);output.textContent='A FLÁVIA INTELLIGENCE está criando sua resposta...';const contexto=`MEMÓRIA ESTRATÉGICA DA CRIADORA:\n${obterMemoria()||'Use o contexto-base da marca.'}\n${contextoEspecialista(prompt)}\nSOLICITAÇÃO:\n${prompt}`;try{const res=await fetch('/api/flavia-intelligence',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:contexto,history:[]})});const raw=await res.text();let data={};try{data=JSON.parse(raw)}catch(_){throw new Error('A função devolveu uma resposta inválida. Confira a publicação da função no Cloudflare Pages.')}if(!res.ok)throw new Error((data.error||'Falha ao consultar a inteligência')+(data.detail?' '+data.detail:''));output.textContent=data.reply||'A inteligência não retornou texto.';output.dataset.prompt=prompt;}catch(error){output.textContent='Não foi possível gerar agora: '+error.message;}}
+
+async function gerarConteudo(){
+ const f=valor('formato'),o=valor('objetivo'),t=valor('tema'),of=valor('oferta'),tom=valor('tom'),n=Number(valor('qtdTelas')||10);
+ const prompt=`Crie uma peça completa para a marca A Taróloga Fora da Caixa.
+FORMATO: ${f}
+OBJETIVO: ${o}
+TEMA: ${t||'Escolha um tema estratégico coerente com a marca e explique a escolha.'}
+OFERTA/DESTINO: ${of||'Não há oferta informada; não invente uma.'}
+TOM: ${tom}
+${f==='Carrossel'?`QUANTIDADE EXATA: ${n} telas. Entregue estratégia, título principal, duas alternativas de gancho, todas as telas numeradas de 1 a ${n}, legenda complementar e direção visual individual para cada tela.`:''}
+Crie conteúdo original, específico, com narrativa progressiva, identificação, descoberta e CTA coerente. Não use textos genéricos nem invente informações comerciais.`;
+ await consultarFlavia(prompt,'saida');
+}
+async function gerarRoteiro(){
+ const p=valor('plataforma'),a=valor('assuntoVideo'),d=valor('duracao');
+ const instrucaoThreads = p==='Threads' ? 'Crie conteúdo nativo para Threads, não um roteiro audiovisual. Entregue uma publicação avulsa forte e, quando o tema pedir, uma sequência encadeada ou uma conversa com respostas. Priorize escrita autoral, primeira pessoa quando adequada, frases naturais, compartilhamento e conversa genuína. Não use hashtags em excesso nem CTA comercial forçada.' : 'Comece pela tensão, sem apresentação. Entregue gancho, texto falado, cenas ou indicações visuais quando úteis, virada, fechamento, CTA, título e descrição quando fizer sentido. Adapte ritmo e profundidade à plataforma e duração.';
+ await consultarFlavia(`Crie conteúdo completo para a plataforma ${p}. Duração aproximada: ${d}. Tema: ${a||'Escolha um tema coerente com o posicionamento da marca.'}. ${instrucaoThreads}`, 'saidaRoteiro');
+}
+async function gerarPagina(){
+ const p=valor('produto'),tr=valor('transformacao'),pr=valor('preco');
+ await consultarFlavia(`Crie uma página de vendas/apresentação completa e persuasiva para a marca A Taróloga Fora da Caixa.
+Produto/serviço: ${p||'[NOME DA OFERTA A DEFINIR]'}
+Transformação e entrega informadas: ${tr||'[INFORMAÇÕES DA ENTREGA A COMPLETAR]'}
+Preço informado: ${pr||'Não informado. Não invente.'}
+Entregue headline, identificação, problema, proposta, método, entregáveis, benefícios, para quem é e para quem não é, objeções, perguntas frequentes, investimento e CTA. Onde faltarem dados, use campos [A PREENCHER], sem inventar preço, resultado, depoimento, garantia ou condição.`, 'saidaPagina');
+}
+async function gerarCampanha(){
+ const o=valor('campOferta'),per=valor('periodo');
+ await consultarFlavia(`Planeje uma campanha completa para a marca A Taróloga Fora da Caixa.
+Oferta: ${o||'[OFERTA A DEFINIR]'}
+Período: ${per||'Não informado; proponha uma sequência sem inventar datas.'}
+Organize atração, conexão, autoridade e conversão. Inclua objetivo, mensagem central, público, calendário sugerido, conteúdos por etapa, ganchos, stories, chamadas para ação, peças de venda e indicadores para acompanhar. Não invente preço, bônus, depoimentos, escassez, prazo ou condições comerciais.`, 'saidaCampanha');
+}
+async function gerarTarot(){
+ const c=valor('carta'),t=valor('temaTarot');
+ await consultarFlavia(`Crie uma leitura/reflexão aprofundada usando a carta ou arquétipo: ${c||'Peça a carta antes de interpretar, se for indispensável.'}.
+Tema/pergunta: ${t||'Apresente possibilidades de investigação sem presumir uma pergunta.'}
+Considere simbolismo tradicional, contexto da pergunta e abordagem sistêmica quando pertinente. Diferencie significado tradicional, leitura simbólica/reflexiva e possibilidades preditivas apenas se a pergunta solicitar. Não afirme certezas nem invente cartas que não foram informadas. Termine com síntese e perguntas práticas.`, 'saidaTarot');
+}
+function salvarMemoria(){localStorage.setItem('flaviaMemoriaEstrategica',document.getElementById('memoriaMarca').value.trim());localStorage.setItem('flaviaEspecialistaPadrao',document.getElementById('especialistaPadrao').value);document.getElementById('memoriaStatus').textContent='Memória estratégica salva neste navegador.';}
+function limparMemoria(){localStorage.removeItem('flaviaMemoriaEstrategica');localStorage.removeItem('flaviaEspecialistaPadrao');document.getElementById('memoriaMarca').value='';document.getElementById('especialistaPadrao').value='auto';document.getElementById('memoriaStatus').textContent='Memória estratégica limpa.';}
+function carregarMemoria(){document.getElementById('memoriaMarca').value=obterMemoria();document.getElementById('especialistaPadrao').value=obterEspecialista();document.getElementById('memoriaStatus').textContent=obterMemoria()?'Memória estratégica carregada deste navegador.':'A memória ainda não foi configurada.';}
+async function executarEstrategia(){const meta=valor('metaEstrategica'),prazo=valor('prazoEstrategico'),limites=valor('limiteEstrategico');if(!meta){document.getElementById('saidaEstrategia').textContent='Escreva primeiro o que deseja alcançar ou resolver.';return;}await consultarFlavia(`Atue como estrategista principal do negócio e da comunicação de A Taróloga Fora da Caixa. Meta: ${meta}. Prazo: ${prazo||'não definido'}. Limites: ${limites||'não informados'}. Entregue diagnóstico honesto, objetivo prioritário, três prioridades em ordem, plano de ação por etapas, conteúdos e canais recomendados, indicadores simples, riscos, o que não fazer agora e a primeira ação concreta para hoje. Respeite os limites e não invente dados, orçamento, resultados ou vendas.`,`saidaEstrategia`);}
+function salvarEstrategia(){const txt=document.getElementById('saidaEstrategia').textContent;if(!txt||txt.startsWith('Seu diagnóstico'))return alert('Gere o plano antes de salvar.');let a=projetos();a.unshift({titulo:'Plano estratégico: '+(valor('metaEstrategica').slice(0,70)||'Sem título'),conteudo:txt,data:new Date().toLocaleString('pt-BR')});localStorage.setItem('flaviaProjetos',JSON.stringify(a));alert('Plano estratégico salvo na biblioteca deste navegador.');}
+async function revisarSaida(id){const el=document.getElementById(id),texto=el.textContent.trim();if(!texto||/aparecerá aqui|aparecerão aqui/.test(texto)){alert('Gere um conteúdo antes de pedir a revisão.');return;}await consultarFlavia(`Revise criticamente este material. Preserve intenção e voz da marca, melhore clareza, originalidade, força narrativa, especificidade e utilidade. Explique brevemente os pontos fracos e entregue a versão aprimorada. Não invente fatos ou informações comerciais.\n\nMATERIAL:\n${texto}`,id);}
+function projetos(){return JSON.parse(localStorage.getItem('flaviaProjetos')||'[]')}
+function salvarSaida(){let s=valor('tema')||'Conteúdo sem título',txt=document.getElementById('saida').textContent;let a=projetos();a.unshift({titulo:s,conteudo:txt,data:new Date().toLocaleString('pt-BR')});localStorage.setItem('flaviaProjetos',JSON.stringify(a));alert('Rascunho salvo na biblioteca deste navegador.')}
+function listar(){let a=projetos(),el=document.getElementById('listaProjetos');el.innerHTML=a.length?'':'<p class="small">Ainda não há projetos salvos.</p>';a.forEach((p,i)=>{let d=document.createElement('div');d.className='item';let span=document.createElement('div');span.innerHTML='<b></b><div class="small"></div>';span.querySelector('b').textContent=p.titulo;span.querySelector('.small').textContent=p.data;let b=document.createElement('button');b.className='btn secondary';b.textContent='Abrir';b.onclick=()=>{document.getElementById('saida').textContent=p.conteudo;document.querySelector('[data-page="criar"]').click()};d.append(span,b);el.append(d)})}
+function copiar(id){let t=document.getElementById(id).innerText;navigator.clipboard.writeText(t).then(()=>alert('Texto copiado.')).catch(()=>alert('Selecione e copie o texto manualmente.'))}
+function exportar(){let blob=new Blob([JSON.stringify(projetos(),null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='biblioteca-flavia.json';a.click();URL.revokeObjectURL(a.href)}
+function nomeArquivo(nome){return (nome||'documento-flavia').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9]+/g,'-').replace(/^-|-$/g,'').toLowerCase()||'documento-flavia'}
+function textoExportavel(id){const el=document.getElementById(id);if(!el)throw new Error('Conteúdo não encontrado.');const texto=(el.innerText||el.textContent||'').trim();if(!texto||/aparecerá aqui|aparecerão aqui|criando sua resposta/i.test(texto))throw new Error('Ainda não existe conteúdo pronto para exportar.');return texto}
+function escaparHTML(texto){return String(texto).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function abrirImpressao(titulo,corpo){const w=window.open('','_blank');if(!w){alert('O navegador bloqueou a janela. Permita pop-ups para este site e tente novamente.');return;}const html='<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>'+escaparHTML(titulo)+'</title><style>body{font-family:Arial,sans-serif;color:#24151a;margin:36px;line-height:1.6}h1{font-family:Georgia,serif;color:#672638;border-bottom:2px solid #672638;padding-bottom:12px;font-size:24px}pre{font-family:Arial,sans-serif;white-space:pre-wrap;overflow-wrap:anywhere;font-size:11pt}footer{margin-top:35px;padding-top:12px;border-top:1px solid #ddd;color:#777;font-size:9pt}@page{margin:18mm}</style></head><body><h1>'+escaparHTML(titulo)+'</h1><pre>'+escaparHTML(corpo)+'</pre><footer>A Taróloga Fora da Caixa • Flávia Bezerra Studio</footer><script>window.onload=function(){setTimeout(function(){window.print()},350)};<\/script><script>(function(){const b=document.getElementById('installStudioApp');let promptEvent=null;const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);if(b)b.addEventListener('click',async()=>{if(promptEvent){promptEvent.prompt();await promptEvent.userChoice;promptEvent=null;}else if(ios){alert('No iPhone: toque em Compartilhar no Safari e escolha Adicionar à Tela de Início.');}else{alert('Abra o menu do navegador e escolha Instalar aplicativo ou Adicionar à tela inicial.');}});window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();promptEvent=e;});window.addEventListener('appinstalled',()=>{if(b)b.textContent='Aplicativo instalado';});if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('/service-worker.js').catch(()=>{}));})();</script></body></html>';w.document.open();w.document.write(html);w.document.close();}
+function exportarPDF(id,titulo){try{abrirImpressao(titulo,textoExportavel(id));}catch(e){alert(e.message)}}
+function baixarWord(id,titulo){try{const texto=textoExportavel(id),html='<!doctype html><html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>'+escaparHTML(titulo)+'</title><!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:DoNotOptimizeForBrowser/></w:WordDocument></xml><![endif]--><style>body{font-family:Arial,sans-serif;color:#24151a;font-size:11pt}h1{font-family:Georgia,serif;color:#672638;font-size:20pt}pre{font-family:Arial,sans-serif;white-space:pre-wrap;overflow-wrap:break-word}</style></head><body><h1>'+escaparHTML(titulo)+'</h1><pre>'+escaparHTML(texto)+'</pre><p style="color:#777;font-size:9pt">A Taróloga Fora da Caixa • Flávia Bezerra Studio</p></body></html>';baixarBlob(html,'application/msword;charset=utf-8',nomeArquivo(titulo)+'.doc');}catch(e){alert(e.message)}}
+function baixarBlob(conteudo,tipo,nome){const blob=new Blob(['\ufeff',conteudo],{type:tipo}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=nome;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500)}
+function exportarBibliotecaPDF(){const a=projetos();if(!a.length){alert('Sua biblioteca ainda está vazia.');return;}const corpo=a.map((p,i)=>'PROJETO '+(i+1)+'\n'+(p.titulo||'Sem título')+'\n'+(p.data||'')+'\n\n'+(p.conteudo||'')).join('\n\n'+'='.repeat(60)+'\n\n');abrirImpressao('Biblioteca de projetos',corpo)}
+function exportarBibliotecaWord(){const a=projetos();if(!a.length){alert('Sua biblioteca ainda está vazia.');return;}const corpo=a.map((p,i)=>'PROJETO '+(i+1)+'\n'+(p.titulo||'Sem título')+'\n'+(p.data||'')+'\n\n'+(p.conteudo||'')).join('\n\n'+'='.repeat(60)+'\n\n');const html='<!doctype html><html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>Biblioteca de projetos</title><style>body{font-family:Arial,sans-serif;color:#24151a;font-size:11pt}h1{font-family:Georgia,serif;color:#672638}pre{font-family:Arial,sans-serif;white-space:pre-wrap;overflow-wrap:break-word}</style></head><body><h1>Biblioteca de projetos</h1><pre>'+escaparHTML(corpo)+'</pre><p style="color:#777;font-size:9pt">A Taróloga Fora da Caixa • Flávia Bezerra Studio</p></body></html>';baixarBlob(html,'application/msword;charset=utf-8','biblioteca-flavia.doc')}
+function importar(){document.getElementById('arquivoImport').click()}
+document.getElementById('arquivoImport').addEventListener('change',e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let incoming=JSON.parse(r.result);if(!Array.isArray(incoming))throw 0;localStorage.setItem('flaviaProjetos',JSON.stringify([...incoming,...projetos()]));listar();alert('Biblioteca importada.')}catch(_){alert('Arquivo inválido.')}};r.readAsText(f)})
+
+// Compatibilidade: disponibiliza explicitamente os comandos para os botões no Safari.
+window.gerarConteudo=gerarConteudo;
+window.salvarSaida=salvarSaida;
+window.gerarRoteiro=gerarRoteiro;
+window.gerarPagina=gerarPagina;
+window.gerarCampanha=gerarCampanha;
+window.gerarTarot=gerarTarot;
+window.copiar=copiar;
+window.exportar=exportar;window.exportarPDF=exportarPDF;window.baixarWord=baixarWord;window.exportarBibliotecaPDF=exportarBibliotecaPDF;window.exportarBibliotecaWord=exportarBibliotecaWord;
+window.importar=importar;window.salvarMemoria=salvarMemoria;window.limparMemoria=limparMemoria;window.executarEstrategia=executarEstrategia;window.salvarEstrategia=salvarEstrategia;window.revisarSaida=revisarSaida;carregarMemoria();
+window.addEventListener('error',function(ev){
+  const box=document.getElementById('runtimeStatus');
+  if(box){box.textContent='O navegador encontrou um erro ao executar o Studio: '+(ev.message||'erro de JavaScript')+'. Abra este arquivo em um navegador com JavaScript ativado.';box.style.background='#f8dddd';box.style.color='#8a3434';}
+});
+const statusBox=document.getElementById('runtimeStatus');
+if(statusBox){statusBox.textContent='Studio carregado. Front-end ativo. A inteligência central será verificada ao enviar a primeira solicitação.';}
+</script>
+<script>
+(function(){
+ const history=JSON.parse(localStorage.getItem('flaviaConversa')||'[]');
+ const msg=document.getElementById('fiMessage'), send=document.getElementById('fiSend'),
+ status=document.getElementById('fiStatus'), reply=document.getElementById('fiReply');
+ if(!send)return;
+ send.addEventListener('click',async()=>{
+   const text=msg.value.trim(); if(!text)return;
+   send.disabled=true; status.textContent='A FLÁVIA INTELLIGENCE está preparando sua resposta...';
+   try{
+     const contexto=`MEMÓRIA ESTRATÉGICA:\n${obterMemoria()||'Use o contexto-base da marca.'}\n${contextoEspecialista(text)}\nMENSAGEM:\n${text}`;
+     const res=await fetch('/api/flavia-intelligence',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:contexto,history:history.slice(-12)})});
+     const data=await res.json();
+     if(!res.ok) throw new Error(data.error||'Não foi possível concluir a solicitação.');
+     history.push({role:'user',content:text},{role:'assistant',content:data.reply});while(history.length>12)history.shift();localStorage.setItem('flaviaConversa',JSON.stringify(history));
+     reply.textContent=data.reply; msg.value=''; status.textContent='Resposta recebida.';
+   }catch(e){status.textContent=e.message+' Confira se a função foi publicada e se GROQ_API_KEY está configurada nas variáveis do Cloudflare Pages (Production).';}
+   finally{send.disabled=false;}
+ });
+ document.getElementById('fiClear').addEventListener('click',()=>{history.length=0;localStorage.removeItem('flaviaConversa');reply.textContent='Conversa limpa. Como posso ajudar?';status.textContent='Histórico desta sessão apagado.';});
+})();
+</script>
+</body></html>
